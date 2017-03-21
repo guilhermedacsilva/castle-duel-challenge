@@ -1,6 +1,6 @@
-package br.game.castleduel.td.js;
+package br.game.castleduel.js;
 
-import br.game.castleduel.td.unit.Unit;
+import br.game.castleduel.unit.Unit;
 
 public class JsEngine {
 

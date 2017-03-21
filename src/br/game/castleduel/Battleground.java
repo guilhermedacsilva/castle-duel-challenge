@@ -1,4 +1,4 @@
-package br.game.castleduel.td;
+package br.game.castleduel;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import br.game.castleduel.td.gui.Gui;
-import br.game.castleduel.td.unit.Castle;
-import br.game.castleduel.td.unit.Unit;
+import br.game.castleduel.gui.Gui;
+import br.game.castleduel.unit.Castle;
+import br.game.castleduel.unit.Unit;
 
 public class Battleground {
 	protected static final int BATTLEGROUND_WIDTH = 800;

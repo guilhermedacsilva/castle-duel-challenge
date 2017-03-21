@@ -1,4 +1,4 @@
-package br.game.castleduel.td.unit;
+package br.game.castleduel.unit;
 
 public class Unit {
 	private static final int RANGE_CLOSE = 50;

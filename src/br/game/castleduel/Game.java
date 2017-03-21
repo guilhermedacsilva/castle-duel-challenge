@@ -1,10 +1,10 @@
-package br.game.castleduel.td;
+package br.game.castleduel;
 
 import javax.swing.plaf.basic.BasicTextAreaUI;
 
-import br.game.castleduel.td.gui.Gui;
-import br.game.castleduel.td.js.JsEngine;
-import br.game.castleduel.td.unit.Unit;
+import br.game.castleduel.gui.Gui;
+import br.game.castleduel.js.JsEngine;
+import br.game.castleduel.unit.Unit;
 
 public class Game {
 	private Battleground battleground;

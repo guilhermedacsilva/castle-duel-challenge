@@ -1,4 +1,4 @@
-package br.game.castleduel.td.unit;
+package br.game.castleduel.unit;
 
 public class UnitManager {
 	private static Unit[] UNIT_ARRAY = new Unit[] {
