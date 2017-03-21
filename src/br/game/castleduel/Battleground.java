@@ -1,11 +1,8 @@
 package br.game.castleduel;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JFrame;
 
 import br.game.castleduel.gui.Gui;
 import br.game.castleduel.unit.Castle;
@@ -23,8 +20,7 @@ public class Battleground {
 	
 	public Battleground(Gui gui) {
 		initCastles();
-		gui.setSize(BATTLEGROUND_WIDTH,200);
-		gui.setVisible(true);
+		gui.init(BATTLEGROUND_WIDTH);
 		this.gui = gui;
 	}
 	

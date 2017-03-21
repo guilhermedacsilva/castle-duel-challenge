@@ -14,7 +14,7 @@ public class ImageLoader {
 	private static Map<String, BufferedImage> IMAGE_CACHE =
 			new HashMap<>();
 	
-	public static BufferedImage loadImage(String name) {
+	public static BufferedImage load(String name) {
 		if (IMAGE_CACHE.containsKey(name)) {
 			return IMAGE_CACHE.get(name);
 		}

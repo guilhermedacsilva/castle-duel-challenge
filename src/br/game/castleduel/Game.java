@@ -1,19 +1,20 @@
 package br.game.castleduel;
 
-import javax.swing.plaf.basic.BasicTextAreaUI;
-
 import br.game.castleduel.gui.Gui;
 import br.game.castleduel.js.JsEngine;
 import br.game.castleduel.unit.Unit;
 
 public class Game {
+	private static final int FPS = 40;
+	private static final int FRAME_TIME = 1000 / FPS;
+	
 	private Battleground battleground;
 	private JsEngine jsEngine;
 	private Gui gui;
 	
 	private void start() {
 		loadAll();
-		runLoop();
+		runTimeLoop();
 		finish();
 	}
 
@@ -23,10 +24,26 @@ public class Game {
 		jsEngine = new JsEngine();
 	}
 
-	private void runLoop() {
+	private void runTimeLoop() {
+		long timeAfterFrame;
+		long sleepTime;
+		
 		while (!battleground.isFinished()) {
+			timeAfterFrame = now() + FRAME_TIME;
+			
 			runBattle();
+			gui.repaint();
+			
+			sleepTime = timeAfterFrame - now();
+			if (sleepTime > 0) {
+				try { Thread.sleep(sleepTime); }
+				catch (InterruptedException e) {}
+			}
 		}
+	}
+	
+	private static long now() {
+		return System.currentTimeMillis();
 	}
 	
 	private void runBattle() {
