@@ -1,6 +1,6 @@
-package br.tsi.challenge2017.td.js;
+package br.game.castleduel.td.js;
 
-import br.tsi.challenge2017.td.unit.Unit;
+import br.game.castleduel.td.unit.Unit;
 
 public class JsEngine {
 

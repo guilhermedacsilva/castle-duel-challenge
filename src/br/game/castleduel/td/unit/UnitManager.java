@@ -1,4 +1,4 @@
-package br.tsi.challenge2017.td.unit;
+package br.game.castleduel.td.unit;
 
 public class UnitManager {
 	private static Unit[] UNIT_ARRAY = new Unit[] {
