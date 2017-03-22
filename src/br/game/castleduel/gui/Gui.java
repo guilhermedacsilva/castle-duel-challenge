@@ -3,9 +3,13 @@ package br.game.castleduel.gui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import br.game.castleduel.unit.Castle;
+import br.game.castleduel.unit.Unit;
 
 public class Gui extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -16,13 +20,21 @@ public class Gui extends JFrame {
 		setResizable(false);
 	}
 	
-	public void init(int width) {
+	public void init(
+			int width,
+			List<Unit> unitsP1, 
+			List<Unit> unitsP2, 
+			Castle castleP1, 
+			Castle castleP2
+			) {
 		setPreferredSize(new Dimension(width, HEIGHT));
 		setSize(getPreferredSize());
 		add(new DrawPanel(getSize()));
 		pack();
 		setVisible(true);
 		setLocationRelativeTo(null);
+		
+		// TODO: units moving, HP, castle HP
 	}
 
 	private class DrawPanel extends JPanel {

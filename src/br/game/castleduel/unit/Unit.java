@@ -3,7 +3,9 @@ package br.game.castleduel.unit;
 public class Unit {
 	private static final int RANGE_CLOSE = 50;
 	private static final int RANGE_FAR = RANGE_CLOSE * 3;
+	private static int ID_GENERATOR = 0;
 
+	public final int id;
 	protected int health;
 	protected int attack;
 	protected int range;
@@ -19,6 +21,7 @@ public class Unit {
 		this.health = health;
 		this.attack = attack;
 		this.range = ranged ? RANGE_FAR : RANGE_CLOSE;
+		id = ID_GENERATOR++;
 	}
 
 	protected Unit(Unit unit) {
@@ -26,6 +29,7 @@ public class Unit {
 		this.attack = unit.attack;
 		this.gold = unit.gold;
 		this.range = unit.range;
+		id = ID_GENERATOR++;
 	}
 	
 	public int getAttack() {
@@ -55,4 +59,25 @@ public class Unit {
 	public void attack(Unit enemy) {
 		enemy.health -= attack;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Unit other = (Unit) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+	
+	
 }

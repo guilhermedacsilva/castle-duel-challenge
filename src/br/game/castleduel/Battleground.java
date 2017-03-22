@@ -20,7 +20,7 @@ public class Battleground {
 	
 	public Battleground(Gui gui) {
 		initCastles();
-		gui.init(BATTLEGROUND_WIDTH);
+		gui.init(BATTLEGROUND_WIDTH, unitsP1, unitsP2, castleP1, castleP2);
 		this.gui = gui;
 	}
 	
