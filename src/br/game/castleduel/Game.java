@@ -1,7 +1,9 @@
 package br.game.castleduel;
 
+import java.awt.Toolkit;
+
 import br.game.castleduel.gui.Gui;
-import br.game.castleduel.js.JsEngine;
+import br.game.castleduel.js.PlayerEngine;
 import br.game.castleduel.unit.Unit;
 
 public class Game {
@@ -9,7 +11,7 @@ public class Game {
 	private static final int FRAME_TIME = 1000 / FPS;
 	
 	private Battleground battleground;
-	private JsEngine jsEngine;
+	private PlayerEngine jsEngine;
 	private Gui gui;
 	
 	private void start() {
@@ -21,7 +23,7 @@ public class Game {
 	private void loadAll() {
 		gui = new Gui();
 		battleground = new Battleground(gui);
-		jsEngine = new JsEngine();
+		jsEngine = new PlayerEngine();
 	}
 
 	private void runTimeLoop() {
@@ -33,6 +35,7 @@ public class Game {
 			
 			runBattle();
 			gui.repaint();
+			Toolkit.getDefaultToolkit().sync();
 			
 			sleepTime = timeAfterFrame - now();
 			if (sleepTime > 0) {

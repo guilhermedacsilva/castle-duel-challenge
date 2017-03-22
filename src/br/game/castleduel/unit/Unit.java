@@ -1,22 +1,25 @@
 package br.game.castleduel.unit;
 
-public class Unit {
+public class Unit extends LivingBeing {
 	private static final int RANGE_CLOSE = 50;
 	private static final int RANGE_FAR = RANGE_CLOSE * 3;
 	private static int ID_GENERATOR = 0;
+	private static long ATTACK_DELAY_TIME = 2000; // milliseconds 
 
 	public final int id;
-	protected int health;
+	protected int type;
 	protected int attack;
 	protected int range;
 	protected int gold;
 	protected int position = 0;
+	protected long timeNextAttack = 0;
 
-	protected Unit(int gold, int health, int attack) {
-		this(gold, health, attack, false);
+	protected Unit(int type, int gold, int health, int attack) {
+		this(type, gold, health, attack, false);
 	}
 	
-	protected Unit(int gold, int health, int attack, boolean ranged) {
+	protected Unit(int type, int gold, int health, int attack, boolean ranged) {
+		this.type = type;
 		this.gold = gold;
 		this.health = health;
 		this.attack = attack;
@@ -25,6 +28,7 @@ public class Unit {
 	}
 
 	protected Unit(Unit unit) {
+		this.type = unit.type;
 		this.health = unit.health;
 		this.attack = unit.attack;
 		this.gold = unit.gold;
@@ -40,10 +44,6 @@ public class Unit {
 		return health;
 	}
 	
-	public boolean isDead() {
-		return health <= 0;
-	}
-	
 	public int getRange() {
 		return range;
 	}
@@ -52,12 +52,19 @@ public class Unit {
 		return position;
 	}
 	
+	public int getType() {
+		return type;
+	}
+	
 	public void walk() {
 		position++;
 	}
 
-	public void attack(Unit enemy) {
-		enemy.health -= attack;
+	public void attackWithCooldown(LivingBeing enemy) {
+		if (System.currentTimeMillis() >= timeNextAttack) {
+			enemy.looseHealth(attack);
+			timeNextAttack = System.currentTimeMillis() + ATTACK_DELAY_TIME;
+		}
 	}
 	
 	@Override

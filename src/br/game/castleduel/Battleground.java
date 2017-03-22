@@ -9,18 +9,18 @@ import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
 public class Battleground {
-	protected static final int BATTLEGROUND_WIDTH = 800;
-	protected static final int CASTLE_POSITION = 750;
+	public static final int BATTLEGROUND_WIDTH = 800;
+	public static final int CASTLE_POSITION = 700;
 
 	protected Gui gui;
-	protected List<Unit> unitsP1 = new ArrayList<Unit>(50);
-	protected List<Unit> unitsP2 = new ArrayList<Unit>(50);
+	protected List<Unit> unitsP1 = new ArrayList<Unit>(100);
+	protected List<Unit> unitsP2 = new ArrayList<Unit>(100);
 	protected Castle castleP1;
 	protected Castle castleP2;
 	
 	public Battleground(Gui gui) {
 		initCastles();
-		gui.init(BATTLEGROUND_WIDTH, unitsP1, unitsP2, castleP1, castleP2);
+		gui.init(BATTLEGROUND_WIDTH, castleP1, castleP2);
 		this.gui = gui;
 	}
 	
@@ -40,6 +40,7 @@ public class Battleground {
 	public void addUnitFromPlayer(Unit unit, int player) {
 		if (unit != null) {
 			getUnitsFromPlayer(player).add(unit);
+			gui.addSprite(player, unit);
 		}
 	}
 	
@@ -73,7 +74,7 @@ public class Battleground {
 			) {
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy)) {
-				unit.attack(enemy);
+				unit.attackWithCooldown(enemy);
 				return true;
 			}
 		}
@@ -97,7 +98,7 @@ public class Battleground {
 			) {
 		int distance = CASTLE_POSITION - unit.getPosition();
 		if (distance <= unit.getRange()) {
-			castle.looseHealth(unit.getAttack());
+			unit.attackWithCooldown(castle);
 			return true;
 		}
 		return false;
