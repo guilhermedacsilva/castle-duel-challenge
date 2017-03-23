@@ -4,17 +4,20 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.util.Random;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Unit;
 
 public class UnitSprite extends SpriteConsts {
 	private static int ID_GENERATOR = 0;
+	private static Random RANDOM = new Random();
 	private final int id;
 	private final int player;
 	private final Unit unit;
 	private int width;
 	private BufferedImage image;
+	private int posY;
 	
 	public UnitSprite(int player, Unit unit) {
 		this.player = player;
@@ -22,6 +25,7 @@ public class UnitSprite extends SpriteConsts {
 		width = 50;
 		id = ID_GENERATOR++;
 		image = loadImage(player, unit);
+		posY = TYPE_DATA[unit.getType()][POS_Y] + RANDOM.nextInt(11) - 5;
 	}
 	
 	public boolean isUnitDead() {
@@ -31,14 +35,18 @@ public class UnitSprite extends SpriteConsts {
 	public void paint(Graphics g) {
 		g.drawImage(image, 
 				getPositionX(), 
-				144,
-				getPositionX() + 45,
-				144 + 45,
-				TYPE_DATA[unit.getType()][X1],
-				TYPE_DATA[unit.getType()][Y1],
-				TYPE_DATA[unit.getType()][X2],
-				TYPE_DATA[unit.getType()][Y2],
+				posY,
+				getPositionX() + getImageData(WIDTH),
+				posY + getImageData(HEIGHT),
+				getImageData(X1),
+				getImageData(Y1),
+				getImageData(X2),
+				getImageData(Y2),
 				null);
+	}
+	
+	private int getImageData(int index) {
+		return TYPE_DATA[unit.getType()][index];
 	}
 	
 	private int getPositionX() {

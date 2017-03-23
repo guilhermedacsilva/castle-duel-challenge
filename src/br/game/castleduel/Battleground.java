@@ -73,7 +73,7 @@ public class Battleground {
 			List<Unit> enemies
 			) {
 		for (Unit enemy : enemies) {
-			if (isInAttackRange(unit, enemy)) {
+			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
 				unit.attackWithCooldown(enemy);
 				return true;
 			}

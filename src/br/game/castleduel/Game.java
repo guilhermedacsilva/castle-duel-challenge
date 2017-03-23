@@ -3,7 +3,7 @@ package br.game.castleduel;
 import java.awt.Toolkit;
 
 import br.game.castleduel.gui.Gui;
-import br.game.castleduel.js.PlayerEngine;
+import br.game.castleduel.player.PlayerEngine;
 import br.game.castleduel.unit.Unit;
 
 public class Game {
@@ -29,11 +29,12 @@ public class Game {
 	private void runTimeLoop() {
 		long timeAfterFrame;
 		long sleepTime;
+		int frame = 0;
 		
 		while (!battleground.isFinished()) {
 			timeAfterFrame = now() + FRAME_TIME;
 			
-			runBattle();
+			runBattle(frame);
 			gui.repaint();
 			Toolkit.getDefaultToolkit().sync();
 			
@@ -42,6 +43,11 @@ public class Game {
 				try { Thread.sleep(sleepTime); }
 				catch (InterruptedException e) {}
 			}
+			
+			frame++;
+			if (frame == FPS) {
+				frame = 0;
+			}
 		}
 	}
 	
@@ -49,12 +55,14 @@ public class Game {
 		return System.currentTimeMillis();
 	}
 	
-	private void runBattle() {
-		Unit unit;
-		unit = jsEngine.runPlayer(1);
-		battleground.addUnitFromPlayer(unit, 1);
-		unit = jsEngine.runPlayer(2);
-		battleground.addUnitFromPlayer(unit, 2);
+	private void runBattle(int frame) {
+		if (frame % 10 == 0) {
+			Unit unit;
+			unit = jsEngine.runPlayer(1);
+			battleground.addUnitFromPlayer(unit, 1);
+			unit = jsEngine.runPlayer(2);
+			battleground.addUnitFromPlayer(unit, 2);
+		}
 		battleground.executeBattle();
 	}
 	

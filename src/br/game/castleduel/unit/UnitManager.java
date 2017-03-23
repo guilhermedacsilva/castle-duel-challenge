@@ -5,9 +5,9 @@ public class UnitManager {
 		// 1 melee
 		new Unit(0, 3, 10, 3),
 		// 1 ranged
-		new Unit(1, 3, 8, 3, true),
+		new Unit(1, 4, 7, 2, true),
 		// 1 tank
-		new Unit(2, 5, 25, 3),
+		new Unit(2, 5, 30, 3),
 
 		// 2 melee
 		new Unit(3, 9, 32, 10),
