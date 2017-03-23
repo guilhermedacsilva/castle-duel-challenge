@@ -7,7 +7,7 @@ public class PlayerEngine {
 	private boolean test = true;
 	
 	public Unit runPlayer(int player) {
-		if (test && player == 1) {
+		if (test && player == 2) {
 			test = false;
 			return UnitManager.createUnit(0);
 		}

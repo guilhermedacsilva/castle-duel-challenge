@@ -1,8 +1,9 @@
 package br.game.castleduel.gui;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Unit;
@@ -20,7 +21,7 @@ public class UnitSprite extends SpriteConsts {
 		this.unit = unit;
 		width = 50;
 		id = ID_GENERATOR++;
-		image = ImageLoader.load("unit" + unit.getType() + ".png");
+		image = loadImage(player, unit);
 	}
 	
 	public boolean isUnitDead() {
@@ -28,8 +29,6 @@ public class UnitSprite extends SpriteConsts {
 	}
 	
 	public void paint(Graphics g) {
-		g.setColor(Color.black);
-//		g.fillRect(getPositionX(), 100, width, 100);
 		g.drawImage(image, 
 				getPositionX(), 
 				144,
@@ -47,6 +46,33 @@ public class UnitSprite extends SpriteConsts {
 			return unit.getPosition();
 		}
 		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition() - width;
+	}
+	
+	protected static BufferedImage loadImage(int player, Unit unit) {
+		BufferedImage image = ImageLoader.load("unit" + unit.getType() + ".png");
+		image = copyImage(image);
+		if (player == 2) {
+			flip(image);
+		}
+		return image;
+	}
+	
+	protected static void flip(BufferedImage image)
+	{
+	    for (int i = 0; i < image.getWidth()/2; i++)
+	        for (int j = 0; j < image.getHeight(); j++)
+	        {
+	            int tmp = image.getRGB(i, j);
+	            image.setRGB(i, j, image.getRGB(image.getWidth()-1-i, j));
+	            image.setRGB(image.getWidth()-1-i, j, tmp);
+	        }
+	}
+	
+	protected static BufferedImage copyImage(BufferedImage image) {
+		 ColorModel cm = image.getColorModel();
+		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		 WritableRaster raster = image.copyData(null);
+		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 
 	@Override

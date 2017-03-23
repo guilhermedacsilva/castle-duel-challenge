@@ -4,7 +4,7 @@ public class Unit extends LivingBeing {
 	private static final int RANGE_CLOSE = 50;
 	private static final int RANGE_FAR = RANGE_CLOSE * 3;
 	private static int ID_GENERATOR = 0;
-	private static long ATTACK_DELAY_TIME = 2000; // milliseconds 
+	private static long ATTACK_DELAY_TIME = 1500; // milliseconds 
 
 	public final int id;
 	protected int type;

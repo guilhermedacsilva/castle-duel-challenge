@@ -5,8 +5,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
@@ -17,7 +15,7 @@ import br.game.castleduel.unit.Unit;
 
 public class Gui extends JFrame {
 	private static final long serialVersionUID = 1L;
-	protected static final int HEIGHT = 200;
+	protected static final int HEIGHT = 230;
 
 	protected LinkedBlockingQueue<UnitSprite> sprites;
 	protected Castle castleP1;
