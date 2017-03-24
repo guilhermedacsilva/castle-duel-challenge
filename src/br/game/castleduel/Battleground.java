@@ -26,8 +26,8 @@ public class Battleground {
 	}
 	
 	protected void initCastles() {
-		castleP1 = new Castle();
-		castleP2 = new Castle();
+		castleP1 = new Castle(1);
+		castleP2 = new Castle(2);
 	}
 	
 	public boolean isFinished() {
@@ -106,8 +106,11 @@ public class Battleground {
 		boolean hit = false;
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				hit = unit.attackWithNoCooldown(enemy) || hit;
 				enemyInRange = true;
+				if (unit.attackWithNoCooldown(enemy)) {
+					hit = true;
+					gui.addSpriteAbstract(new SpriteExplosion(enemy));
+				}
 			}
 		}
 		if (hit) {
@@ -127,13 +130,15 @@ public class Battleground {
 		return distance <= unit.getRange();
 	}
 	
-	protected static boolean tryAttackCastle(
+	protected boolean tryAttackCastle(
 			Unit unit, 
 			Castle castle
 			) {
 		int distance = CASTLE_POSITION - unit.getPosition();
 		if (distance <= unit.getRange()) {
-			unit.attackWithCooldown(castle);
+			if (unit.attackWithCooldown(castle)) {
+				gui.addSpriteAbstract(new SpriteExplosion(castle));
+			}
 			return true;
 		}
 		return false;

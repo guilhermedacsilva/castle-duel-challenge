@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import br.game.castleduel.Game;
+import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
 public class SpriteExplosion extends SpriteAbstract {
@@ -17,12 +18,18 @@ public class SpriteExplosion extends SpriteAbstract {
 	private static final Random RANDOM = new Random();
 	private int nextStateFrame = 0;
 	private int currentState = 0;
-	private int destinationPositionX;
-	private int destinationPositionY;
+	private SpriteUnit spriteUnit;
+	private int offsetX;
+	private int offsetY;
 	
 	public SpriteExplosion(Unit unit) {
-		destinationPositionX = unit.getSprite().getPositionX() + RANDOM.nextInt(17) - 8;
-		destinationPositionY = unit.getSprite().getPositionY() + RANDOM.nextInt(23) - 11;
+		spriteUnit = unit.getSprite();
+		offsetX = RANDOM.nextInt(17) - 8;
+		offsetY = RANDOM.nextInt(23) - 11;
+	}
+
+	public SpriteExplosion(Castle castle) {
+		
 	}
 
 	@Override
@@ -59,12 +66,14 @@ public class SpriteExplosion extends SpriteAbstract {
 
 	private void updateState() {
 		currentState++;
-		System.out.println(currentState);
 	}
 	
 	private void drawExplosion(Graphics g) {
 		final int x1 = currentState / 4;
 		final int y1 = currentState % 4;
+		
+		int destinationPositionX = spriteUnit.getPositionX() + offsetX;
+		int destinationPositionY = spriteUnit.getPositionY() + offsetY;
 		
 		g.drawImage(EXPLOSION_IMAGE, 
 				destinationPositionX, 
