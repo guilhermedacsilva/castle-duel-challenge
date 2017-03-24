@@ -7,7 +7,7 @@ import br.game.castleduel.player.PlayerEngine;
 import br.game.castleduel.unit.Unit;
 
 public class Game {
-	public static final int FPS = 120;
+	public static final int FPS = 40;
 	public static final int FRAME_TIME = 1000 / FPS;
 	private static int CURRENT_FRAME = 0;
 	private static final int FRAME_PLAYER = 13;

@@ -19,9 +19,9 @@ public class Gui extends JPanel {
 	protected BufferedImage castle = ImageLoader.load("castle.png");
 	protected BufferedImage grass = ImageLoader.load("grass.jpg");
 	protected BufferedImage sky = ImageLoader.load("sky.jpg");
-	private List<UnitSprite> deadSprites;
+	private List<SpriteAbstract> deadSprites;
 
-	protected LinkedBlockingQueue<UnitSprite> sprites;
+	protected LinkedBlockingQueue<SpriteAbstract> sprites;
 	protected Castle castleP1;
 	protected Castle castleP2;
 	
@@ -52,7 +52,11 @@ public class Gui extends JPanel {
 	}
 	
 	public void addSprite(int player, Unit unit) {
-		sprites.add(new UnitSprite(player, unit));
+		sprites.add(new SpriteUnit(player, unit));
+	}
+	
+	public void addSpriteAbstract(SpriteAbstract sprite) {
+		sprites.add(sprite);
 	}
 
 	@Override
@@ -75,13 +79,13 @@ public class Gui extends JPanel {
 	
 	protected void drawUnits(Graphics g) {
 		deadSprites.clear();
-		for (UnitSprite sprite : sprites) {
+		for (SpriteAbstract sprite : sprites) {
 			sprite.paint(g);
-			if (sprite.isUnitDead()) {
+			if (sprite.shouldDelete()) {
 				deadSprites.add(sprite);
 			}
 		}
-		for (UnitSprite sprite : deadSprites) {
+		for (SpriteAbstract sprite : deadSprites) {
 			sprites.remove(sprite);
 		}
 	}

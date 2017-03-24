@@ -1,14 +1,14 @@
 package br.game.castleduel.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Unit;
+import br.game.castleduel.util.ImageUtil;
 
-public class UnitSprite extends SpriteConsts {
+public class SpriteUnit extends SpriteAbstract {
 	private static int ID_GENERATOR = 0;
 	private static int[] POS_Y_OFFSET = new int[] {0,0}; //p1, p2
 	private final int id;
@@ -18,7 +18,7 @@ public class UnitSprite extends SpriteConsts {
 	private BufferedImage image;
 	private int posY;
 	
-	public UnitSprite(int player, Unit unit) {
+	public SpriteUnit(int player, Unit unit) {
 		this.player = player;
 		this.unit = unit;
 		width = 50;
@@ -30,18 +30,27 @@ public class UnitSprite extends SpriteConsts {
 		if (POS_Y_OFFSET[player-1] > 50) {
 			POS_Y_OFFSET[player-1] = 0;
 		}
+		
+		unit.setSprite(this);
 	}
-	
-	public boolean isUnitDead() {
+
+	@Override
+	public boolean shouldDelete() {
 		return unit.isDead();
 	}
-	
+
+	@Override
 	public void paint(Graphics g) {
+		drawUnit(g);
+		drawHealthBar(g);
+	}
+	
+	private void drawUnit(Graphics g) {
 		g.drawImage(image, 
 				getPositionX(), 
-				posY,
+				getPositionY(),
 				getPositionX() + getImageData(WIDTH),
-				posY + getImageData(HEIGHT),
+				getPositionY() + getImageData(HEIGHT),
 				getImageData(X1),
 				getImageData(Y1),
 				getImageData(X2),
@@ -49,42 +58,35 @@ public class UnitSprite extends SpriteConsts {
 				null);
 	}
 	
+	private void drawHealthBar(Graphics g) {
+		g.setColor(Color.black);
+		g.fillRect(getPositionX(), posY-8, getImageData(WIDTH), 5);
+		g.setColor(Color.red);
+		g.fillRect(getPositionX(), posY-8, (int)(getImageData(WIDTH)*unit.getHealthPercentage()), 5);
+	}
+	
 	private int getImageData(int index) {
 		return TYPE_DATA[unit.getType()][index];
 	}
 	
-	private int getPositionX() {
+	protected int getPositionX() {
 		if (player == 1) {
 			return unit.getPosition();
 		}
 		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition() - width;
 	}
 	
+	protected int getPositionY() {
+		return posY;
+	}
+	
 	protected static BufferedImage loadImage(int player, Unit unit) {
 		BufferedImage image = ImageLoader.load("unit" + unit.getType() + ".png");
-		image = copyImage(image);
+		image = ImageUtil.copy(image);
 		if (player == 2) {
-			flip(image);
+			ImageUtil.flip(image);
 		}
 		return image;
-	}
-	
-	protected static void flip(BufferedImage image)
-	{
-	    for (int i = 0; i < image.getWidth()/2; i++)
-	        for (int j = 0; j < image.getHeight(); j++)
-	        {
-	            int tmp = image.getRGB(i, j);
-	            image.setRGB(i, j, image.getRGB(image.getWidth()-1-i, j));
-	            image.setRGB(image.getWidth()-1-i, j, tmp);
-	        }
-	}
-	
-	protected static BufferedImage copyImage(BufferedImage image) {
-		 ColorModel cm = image.getColorModel();
-		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		 WritableRaster raster = image.copyData(null);
-		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 
 	@Override
@@ -100,7 +102,7 @@ public class UnitSprite extends SpriteConsts {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UnitSprite other = (UnitSprite) obj;
+		SpriteUnit other = (SpriteUnit) obj;
 		if (id != other.id)
 			return false;
 		return true;

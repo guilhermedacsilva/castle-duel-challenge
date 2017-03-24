@@ -1,6 +1,7 @@
 package br.game.castleduel.unit;
 
 import br.game.castleduel.Game;
+import br.game.castleduel.gui.SpriteUnit;
 
 public class Unit extends LivingBeing {
 	public static final int RANGE_CLOSE = 100;
@@ -17,6 +18,7 @@ public class Unit extends LivingBeing {
 	protected int gold;
 	protected int position = 0;
 	protected long frameNextAttack = 0;
+	private SpriteUnit sprite;
 
 	protected Unit(int type, int gold, int health, int attack) {
 		this(type, gold, health, attack, RANGE_CLOSE);
@@ -31,6 +33,7 @@ public class Unit extends LivingBeing {
 		this.type = type;
 		this.gold = gold;
 		this.health = health;
+		this.healthMax = health;
 		this.attack = attack;
 		this.attackType = attackType;
 		this.range = range;
@@ -40,6 +43,7 @@ public class Unit extends LivingBeing {
 	protected Unit(Unit unit) {
 		this.type = unit.type;
 		this.health = unit.health;
+		this.healthMax = unit.health;
 		this.attack = unit.attack;
 		this.attackType = unit.attackType;
 		this.gold = unit.gold;
@@ -75,11 +79,13 @@ public class Unit extends LivingBeing {
 		position++;
 	}
 
-	public void attackWithCooldown(LivingBeing enemy) {
+	public boolean attackWithCooldown(LivingBeing enemy) {
 		if (Game.getCURRENT_FRAME() >= frameNextAttack) {
 			enemy.looseHealth(attack);
 			frameNextAttack = Game.getCURRENT_FRAME() + ATTACK_DELAY_FRAMES;
+			return true;
 		}
+		return false;
 	}
 	
 	public boolean attackWithNoCooldown(LivingBeing enemy) {
@@ -92,6 +98,14 @@ public class Unit extends LivingBeing {
 	
 	public void updateCooldown() {
 		frameNextAttack = Game.getCURRENT_FRAME() + ATTACK_DELAY_FRAMES;
+	}
+
+	public void setSprite(SpriteUnit sprite) {
+		this.sprite = sprite;
+	}
+	
+	public SpriteUnit getSprite() {
+		return sprite;
 	}
 	
 	@Override

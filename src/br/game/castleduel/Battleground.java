@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.game.castleduel.gui.Gui;
+import br.game.castleduel.gui.SpriteExplosion;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -54,7 +55,7 @@ public class Battleground {
 		removeDeads();
 	}
 	
-	protected static void attackOtherTeam(
+	protected void attackOtherTeam(
 			List<Unit> attackingUnits, 
 			List<Unit> enemies, 
 			Castle enemyCastle
@@ -68,7 +69,7 @@ public class Battleground {
 		}
 	}
 
-	protected static boolean tryAttackEnemy(
+	protected boolean tryAttackEnemy(
 			Unit unit, 
 			List<Unit> enemies
 			) {
@@ -80,20 +81,24 @@ public class Battleground {
 		}
 	}
 	
-	protected static boolean tryAttackNormalHit(
+	protected boolean tryAttackNormalHit(
 			Unit unit, 
 			List<Unit> enemies
 			) {
+		boolean hit = false;
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				unit.attackWithCooldown(enemy);
+				hit = unit.attackWithCooldown(enemy);
+				if (hit) {
+					gui.addSpriteAbstract(new SpriteExplosion(enemy));
+				}
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	protected static boolean tryAttackHitAll(
+	protected boolean tryAttackHitAll(
 			Unit unit, 
 			List<Unit> enemies
 			) {
