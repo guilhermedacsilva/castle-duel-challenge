@@ -1,5 +1,6 @@
 package br.game.castleduel.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -10,12 +11,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
 public class Gui extends JPanel {
 	private static final long serialVersionUID = 1L;
-	protected static final int HEIGHT_GAME = 255;
+	public static final int HEIGHT_GAME = 255;
+	public static final int CASTLE_POS_X = 20;
+	public static final int CASTLE_POS_Y = 10;
+	public static final int CASTLE_HEALTH_WIDTH = 165;
+	public static final int CASTLE_HEALTH_HEIGHT = 10;
 	protected BufferedImage castle = ImageLoader.load("castle.png");
 	protected BufferedImage grass = ImageLoader.load("grass.jpg");
 	protected BufferedImage sky = ImageLoader.load("sky.jpg");
@@ -73,6 +79,8 @@ public class Gui extends JPanel {
 			g.drawImage(grass, x, 165, null);
 		}
 		
+		drawCastleHealth(g);
+		
 		g.drawImage(castle, 0, 0, null);
 		g.drawImage(castle, getWidth() - castle.getWidth(), 0, null);
 	}
@@ -88,5 +96,27 @@ public class Gui extends JPanel {
 		for (SpriteAbstract sprite : deadSprites) {
 			sprites.remove(sprite);
 		}
+	}
+
+	protected void drawCastleHealth(Graphics g) {
+		
+		g.setColor(Color.black);
+		g.fillRect(CASTLE_POS_X, 
+				CASTLE_POS_Y, 
+				CASTLE_HEALTH_WIDTH, 
+				CASTLE_HEALTH_HEIGHT);
+		g.fillRect(Battleground.BATTLEGROUND_WIDTH - CASTLE_POS_X - CASTLE_HEALTH_WIDTH, 
+				CASTLE_POS_Y, 
+				CASTLE_HEALTH_WIDTH, 
+				CASTLE_HEALTH_HEIGHT);
+		g.setColor(Color.red);
+		g.fillRect(CASTLE_POS_X, 
+				CASTLE_POS_Y, 
+				(int)(CASTLE_HEALTH_WIDTH * castleP1.getHealthPercentage()), 
+				CASTLE_HEALTH_HEIGHT);
+		g.fillRect(Battleground.BATTLEGROUND_WIDTH - CASTLE_POS_X - CASTLE_HEALTH_WIDTH, 
+				CASTLE_POS_Y, 
+				(int)(CASTLE_HEALTH_WIDTH * castleP2.getHealthPercentage()), 
+				CASTLE_HEALTH_HEIGHT);
 	}
 }

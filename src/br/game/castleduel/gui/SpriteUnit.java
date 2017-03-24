@@ -68,15 +68,17 @@ public class SpriteUnit extends SpriteAbstract {
 	private int getImageData(int index) {
 		return TYPE_DATA[unit.getType()][index];
 	}
-	
-	protected int getPositionX() {
+
+	@Override
+	public int getPositionX() {
 		if (player == 1) {
 			return unit.getPosition();
 		}
 		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition() - width;
 	}
-	
-	protected int getPositionY() {
+
+	@Override
+	public int getPositionY() {
 		return posY;
 	}
 	

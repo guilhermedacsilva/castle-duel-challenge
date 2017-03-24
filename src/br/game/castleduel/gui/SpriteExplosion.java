@@ -18,7 +18,7 @@ public class SpriteExplosion extends SpriteAbstract {
 	private static final Random RANDOM = new Random();
 	private int nextStateFrame = 0;
 	private int currentState = 0;
-	private SpriteUnit spriteUnit;
+	private SpriteAbstract spriteUnit;
 	private int offsetX;
 	private int offsetY;
 	
@@ -29,7 +29,9 @@ public class SpriteExplosion extends SpriteAbstract {
 	}
 
 	public SpriteExplosion(Castle castle) {
-		
+		spriteUnit = SpriteCastle.getSprite(castle.getPlayer());
+		offsetX = RANDOM.nextInt(111);
+		offsetY = RANDOM.nextInt(126);
 	}
 
 	@Override
@@ -69,8 +71,8 @@ public class SpriteExplosion extends SpriteAbstract {
 	}
 	
 	private void drawExplosion(Graphics g) {
-		final int x1 = currentState / 4;
-		final int y1 = currentState % 4;
+		final int x1 = currentState % 4;
+		final int y1 = currentState / 4;
 		
 		int destinationPositionX = spriteUnit.getPositionX() + offsetX;
 		int destinationPositionY = spriteUnit.getPositionY() + offsetY;
@@ -86,6 +88,18 @@ public class SpriteExplosion extends SpriteAbstract {
 				STATE_WIDTH_HEIGHT_ORIGINAL * y1 + STATE_WIDTH_HEIGHT_ORIGINAL - 1, 
 				null);
 		
+	}
+	
+	// NOT USED
+
+	@Override
+	public int getPositionX() {
+		return 0;
+	}
+
+	@Override
+	public int getPositionY() {
+		return 0;
 	}
 	
 }

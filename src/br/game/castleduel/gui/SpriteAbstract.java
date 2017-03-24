@@ -34,4 +34,8 @@ abstract public class SpriteAbstract {
 	
 	public abstract void paint(Graphics g);
 	
+	public abstract int getPositionX();
+	
+	public abstract int getPositionY();
+	
 }

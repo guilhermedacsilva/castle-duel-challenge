@@ -4,8 +4,9 @@ public class Castle extends LivingBeing {
 	private int player;
 	
 	public Castle(int player) {
-		this.player = player;
 		health = 120;
+		healthMax = health;
+		this.player = player;
 	}
 	
 	public int getPlayer() {
