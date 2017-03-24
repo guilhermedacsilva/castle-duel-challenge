@@ -15,7 +15,8 @@ import br.game.castleduel.unit.Unit;
 
 public class Gui extends JFrame {
 	private static final long serialVersionUID = 1L;
-	protected static final int HEIGHT = 230;
+	protected static final int HEIGHT_UNIX = 255;
+	protected static final int HEIGHT_WINDOWS = 285;
 
 	protected LinkedBlockingQueue<UnitSprite> sprites;
 	protected Castle castleP1;
@@ -31,9 +32,22 @@ public class Gui extends JFrame {
 			Castle castleP1, 
 			Castle castleP2
 			) {
-		setPreferredSize(new Dimension(width, HEIGHT));
-		setSize(getPreferredSize());
-		add(new DrawPanel(getSize()));
+		
+		final String operationalSys = System.getProperty("os.name", "linux");
+		
+		Dimension size;
+		if (operationalSys.indexOf("mac") >= 0
+				|| operationalSys.indexOf("darwin") >= 0
+				|| operationalSys.indexOf("linux") >= 0
+				|| operationalSys.indexOf("nux") >= 0
+				) {
+			size = new Dimension(width, HEIGHT_UNIX);
+		} else {
+			size = new Dimension(width, HEIGHT_WINDOWS);
+		}
+		
+		add(new DrawPanel(size));
+		pack();
 		setVisible(true);
 		setLocationRelativeTo(null);
 		
@@ -70,7 +84,7 @@ public class Gui extends JFrame {
 			g.drawImage(sky, 0, 0, null);
 			
 			for (int x = 0; x < getWidth(); x += grass.getWidth()) {
-				g.drawImage(grass, x, 150, null);
+				g.drawImage(grass, x, 165, null);
 			}
 			
 			g.drawImage(castle, 0, 0, null);

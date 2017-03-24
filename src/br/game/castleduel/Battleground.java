@@ -10,7 +10,7 @@ import br.game.castleduel.unit.Unit;
 
 public class Battleground {
 	public static final int BATTLEGROUND_WIDTH = 800;
-	public static final int CASTLE_POSITION = 700;
+	public static final int CASTLE_POSITION = 750;
 
 	protected Gui gui;
 	protected List<Unit> unitsP1 = new ArrayList<Unit>(100);
@@ -61,7 +61,7 @@ public class Battleground {
 	) {
 		for (Unit attackingUnit : attackingUnits) {
 			if (tryAttackEnemy(attackingUnit, enemies)
-				|| tryAttackCastle(attackingUnit, enemyCastle)) {
+					|| tryAttackCastle(attackingUnit, enemyCastle)) {
 				continue;
 			}
 			attackingUnit.walk();
@@ -72,6 +72,18 @@ public class Battleground {
 			Unit unit, 
 			List<Unit> enemies
 			) {
+		
+		if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
+			return tryAttackNormalHit(unit, enemies);
+		} else {
+			return tryAttackHitAll(unit, enemies);
+		}
+	}
+	
+	protected static boolean tryAttackNormalHit(
+			Unit unit, 
+			List<Unit> enemies
+			) {
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
 				unit.attackWithCooldown(enemy);
@@ -79,6 +91,24 @@ public class Battleground {
 			}
 		}
 		return false;
+	}
+	
+	protected static boolean tryAttackHitAll(
+			Unit unit, 
+			List<Unit> enemies
+			) {
+		boolean enemyInRange = false;
+		boolean hit = false;
+		for (Unit enemy : enemies) {
+			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
+				hit = unit.attackWithNoCooldown(enemy) || hit;
+				enemyInRange = true;
+			}
+		}
+		if (hit) {
+			unit.updateCooldown();
+		}
+		return enemyInRange;
 	}
 	
 	protected static boolean isInAttackRange(

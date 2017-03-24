@@ -4,14 +4,13 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.util.Random;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Unit;
 
 public class UnitSprite extends SpriteConsts {
 	private static int ID_GENERATOR = 0;
-	private static Random RANDOM = new Random();
+	private static int[] POS_Y_OFFSET = new int[] {0,0}; //p1, p2
 	private final int id;
 	private final int player;
 	private final Unit unit;
@@ -25,7 +24,12 @@ public class UnitSprite extends SpriteConsts {
 		width = 50;
 		id = ID_GENERATOR++;
 		image = loadImage(player, unit);
-		posY = TYPE_DATA[unit.getType()][POS_Y] + RANDOM.nextInt(11) - 5;
+		
+		posY = TYPE_DATA[unit.getType()][POS_Y] + POS_Y_OFFSET[player-1];
+		POS_Y_OFFSET[player-1] += 25;
+		if (POS_Y_OFFSET[player-1] > 50) {
+			POS_Y_OFFSET[player-1] = 0;
+		}
 	}
 	
 	public boolean isUnitDead() {

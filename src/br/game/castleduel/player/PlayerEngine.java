@@ -4,8 +4,8 @@ import br.game.castleduel.unit.Unit;
 import br.game.castleduel.unit.UnitManager;
 
 public class PlayerEngine {
-	private int[] u1 = new int[] {0,0,0,0};
-	private int[] u2 = new int[] {1,1,1};
+	private int[] u1 = new int[] {5,5,5};
+	private int[] u2 = new int[] {4,4,4,4};
 	private int i1 = 0;
 	private int i2 = 0;
 	
