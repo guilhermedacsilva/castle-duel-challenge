@@ -23,9 +23,9 @@ public class Game {
 	}
 
 	private void loadAll() {
+		jsEngine = new PlayerEngine();
 		gui = new Gui();
 		battleground = new Battleground(gui);
-		jsEngine = new PlayerEngine();
 	}
 
 	private void runTimeLoop() {
