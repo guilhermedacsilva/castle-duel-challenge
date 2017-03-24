@@ -17,7 +17,7 @@ import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
-public class Gui extends JPanel {
+public class NormalGui extends JPanel implements GuiInterface {
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT_GAME = 255;
 	public static final int CASTLE_POS_X = 20;
@@ -34,7 +34,7 @@ public class Gui extends JPanel {
 	protected Castle castleP2;
 	protected int playerWon = -1;
 	
-	public Gui() {}
+	public NormalGui() {}
 	
 	public void init(
 			int width,

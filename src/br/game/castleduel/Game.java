@@ -1,33 +1,62 @@
 package br.game.castleduel;
 
-import br.game.castleduel.gui.Gui;
+import br.game.castleduel.gui.GuiInterface;
+import br.game.castleduel.gui.NormalGui;
+import br.game.castleduel.gui.ServerGui;
 import br.game.castleduel.player.PlayerEngine;
 
 public class Game {
 	private static final int FRAME_LIMIT = 60 * 60 * 5;
-	public static final int FPS = 60;
-	public static final int FRAME_TIME = 1000 / FPS;
+	private static int FPS = 60;
+	private static int FRAME_TIME = 1000 / FPS;
 	private static int CURRENT_FRAME = 0;
 	private static final int FRAME_PLAYER = 13;
 	private static final int FRAME_GOLD = FRAME_PLAYER * 6;
+	private boolean server = false;
 
 	private Battleground battleground;
-	private PlayerEngine jsEngine;
-	private Gui gui;
+	private PlayerEngine playerEngine;
+	private GuiInterface gui;
+	private int playerWon = -1;
+	
+	public Game(String[] args) {
+		for (String config : args) {
+			if (config.startsWith("fps")) {
+				FPS = Integer.parseInt(config.substring(3));
+				FRAME_TIME = 1000 / FPS;
+			
+			} else if (config.startsWith("server")) {
+				server = true;
+				
+			}
+		}
+	}
 
 	private void start() {
 		loadAll();
-		runTimeLoop();
+		if (playerWon == -1) {
+			if (server) {
+				runGameLoopServer();
+			} else {
+				runGameLoopNormal();
+			}
+		}
 		finish();
 	}
 
 	private void loadAll() {
-		jsEngine = new PlayerEngine();
-		gui = new Gui();
+		try {
+			playerEngine = new PlayerEngine();
+		} catch (RuntimeException e) {
+			playerWon = Integer.valueOf(e.getMessage());
+		}
+		
+		gui = server ? new ServerGui() : new NormalGui();
+		
 		battleground = new Battleground(gui);
 	}
 
-	private void runTimeLoop() {
+	private void runGameLoopNormal() {
 		long timeAfterFrame;
 		long sleepTime;
 
@@ -50,6 +79,16 @@ public class Game {
 			CURRENT_FRAME++;
 		}
 	}
+	
+	private void runGameLoopServer() {
+		while (!battleground.isFinished()
+				&& CURRENT_FRAME < FRAME_LIMIT) {
+
+			runBattle();
+
+			CURRENT_FRAME++;
+		}
+	}
 
 	private static long now() {
 		return System.currentTimeMillis();
@@ -58,14 +97,14 @@ public class Game {
 	private void runBattle() {
 		if (CURRENT_FRAME % FRAME_PLAYER == 0) {
 			int unitIndex;
-			unitIndex = jsEngine.runPlayer(
+			unitIndex = playerEngine.runPlayer(
 					1,
 					battleground.getGold(1),
 					battleground.getUnits(1),
 					battleground.getUnits(2)					
 					);
 			battleground.addUnitFromPlayer(unitIndex, 1);
-			unitIndex = jsEngine.runPlayer(
+			unitIndex = playerEngine.runPlayer(
 					2,
 					battleground.getGold(2),
 					battleground.getUnits(2),
@@ -80,15 +119,20 @@ public class Game {
 	}
 
 	private void finish() {
-		final int castle1Health = battleground.getCastle1Health();
-		final int castle2Health = battleground.getCastle2Health(); 
-		if (castle1Health > castle2Health) {
-			gui.setPlayerWon(1);
-		} else if (castle1Health < castle2Health) {
-			gui.setPlayerWon(2);
-		} else {
-			gui.setPlayerWon(3);
+		if (playerWon == -1) {
+			final int castle1Health = battleground.getCastle1Health();
+			final int castle2Health = battleground.getCastle2Health();
+			
+			if (castle1Health > castle2Health) {
+				playerWon = 1;
+			} else if (castle1Health < castle2Health) {
+				playerWon = 2;
+			} else {
+				playerWon = 3;
+			}
 		}
+		
+		gui.setPlayerWon(playerWon);
 		gui.updateGame();
 	}
 
@@ -97,7 +141,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		new Game().start();
+		new Game(args).start();
 	}
 
 }

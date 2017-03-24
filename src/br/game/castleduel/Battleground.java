@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import br.game.castleduel.gui.Gui;
+import br.game.castleduel.gui.GuiInterface;
 import br.game.castleduel.gui.SpriteExplosion;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
@@ -16,13 +16,13 @@ public class Battleground {
 	private static final int P1_INDEX = 0;
 	private static final int P2_INDEX = 1;
 
-	protected Gui gui;
+	protected GuiInterface gui;
 	protected List<List<Unit>> units = new ArrayList<List<Unit>>(2);
 	protected List<Castle> castles = new ArrayList<Castle>(2);
 	protected int[] goldArray = new int[] {0, 0};
 	protected int[][] unitCountMatrix = new int[2][6];
 	
-	public Battleground(Gui gui) {
+	public Battleground(GuiInterface gui) {
 		castles.add(new Castle(1));
 		castles.add(new Castle(2));
 		units.add(new ArrayList<Unit>(100));

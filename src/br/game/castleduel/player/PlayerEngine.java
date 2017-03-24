@@ -58,8 +58,8 @@ public class PlayerEngine {
 
 	private void compileJavaFiles() {
 		JavaCompiler compiler = getCompiler();
-		compileFile(compiler, "players/Player1.java");
-		compileFile(compiler, "players/Player2.java");
+		compileFile(compiler, "players/Player1.java", 2);
+		compileFile(compiler, "players/Player2.java", 1);
 	}
 	
 	protected static JavaCompiler getCompiler() {
@@ -71,11 +71,11 @@ public class PlayerEngine {
 		return compiler;
 	}
 	
-	protected void compileFile(JavaCompiler compiler, String path) {
+	protected void compileFile(JavaCompiler compiler, String path, int playerWon) {
 		int result = compiler.run(null, null, null, path);
 		if (result != 0) {
 			System.out.println("Could not compile the file: "+path+".");
-			System.exit(1);
+			throw new RuntimeException(String.valueOf(playerWon));
 		}
 	}
 	

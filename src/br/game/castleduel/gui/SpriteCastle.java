@@ -19,11 +19,11 @@ public class SpriteCastle extends SpriteAbstract {
 	
 	private SpriteCastle(int player) {
 		if (player == 1) {
-			positionX = Gui.CASTLE_POS_X;
+			positionX = NormalGui.CASTLE_POS_X;
 		} else {
-			positionX = Battleground.BATTLEGROUND_WIDTH - Gui.CASTLE_POS_X - Gui.CASTLE_HEALTH_WIDTH;
+			positionX = Battleground.BATTLEGROUND_WIDTH - NormalGui.CASTLE_POS_X - NormalGui.CASTLE_HEALTH_WIDTH;
 		}
-		positionY = Gui.CASTLE_POS_Y;
+		positionY = NormalGui.CASTLE_POS_Y;
 	}
 
 	@Override
