@@ -6,9 +6,10 @@ public abstract class LivingBeing {
 	
 	public void looseHealth(int attack) {
 		health -= attack;
-		System.out.println("------------");
-		System.out.println("\tTake damage: " + attack);
-		System.out.println("\tHealth: " + health);
+	}
+	
+	public int getHealth() {
+		return health;
 	}
 	
 	public boolean isDead() {

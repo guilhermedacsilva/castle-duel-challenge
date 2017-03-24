@@ -59,10 +59,6 @@ public class Unit extends LivingBeing {
 		return attackType;
 	}
 	
-	public int getHealth() {
-		return health;
-	}
-	
 	public int getRange() {
 		return range;
 	}

@@ -8,50 +8,89 @@ import br.game.castleduel.gui.Gui;
 import br.game.castleduel.gui.SpriteExplosion;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
+import br.game.castleduel.unit.UnitManager;
 
 public class Battleground {
 	public static final int BATTLEGROUND_WIDTH = 800;
 	public static final int CASTLE_POSITION = 750;
+	private static final int P1_INDEX = 0;
+	private static final int P2_INDEX = 1;
 
 	protected Gui gui;
-	protected List<Unit> unitsP1 = new ArrayList<Unit>(100);
-	protected List<Unit> unitsP2 = new ArrayList<Unit>(100);
-	protected Castle castleP1;
-	protected Castle castleP2;
+	protected List<List<Unit>> units = new ArrayList<List<Unit>>(2);
+	protected List<Castle> castles = new ArrayList<Castle>(2);
+	protected int[] goldArray = new int[] {0, 0};
+	protected int[][] unitCountMatrix = new int[2][6];
 	
 	public Battleground(Gui gui) {
-		initCastles();
-		gui.init(BATTLEGROUND_WIDTH, castleP1, castleP2);
+		castles.add(new Castle(1));
+		castles.add(new Castle(2));
+		units.add(new ArrayList<Unit>(100));
+		units.add(new ArrayList<Unit>(100));
+		gui.init(BATTLEGROUND_WIDTH, castles.get(P1_INDEX), castles.get(P2_INDEX));
 		this.gui = gui;
 	}
 	
-	protected void initCastles() {
-		castleP1 = new Castle(1);
-		castleP2 = new Castle(2);
+	public void gainGold() {
+		goldArray[P1_INDEX]++;
+		goldArray[P2_INDEX]++;
+	}
+
+	public int getGold(int player) {
+		return goldArray[player-1];
+	}
+
+	public int[] getUnits(int player) {
+		updateUnitCountMatrix();
+		return unitCountMatrix[player-1];
 	}
 	
+	private void updateUnitCountMatrix() {
+		for (int i = 0; i < unitCountMatrix.length; i++) {
+			for (int j = 0; j < unitCountMatrix[i].length; j++) {
+				unitCountMatrix[i][j] = 0;
+			}
+		}
+		List<Unit> playerUnits;
+		for (int playerIndex = 0; playerIndex < units.size(); playerIndex++) {
+			playerUnits = units.get(playerIndex);
+			for (Unit unit : playerUnits) {
+				unitCountMatrix[playerIndex][unit.getType()]++;
+			}
+		}
+	}
+
 	public boolean isFinished() {
-		return castleP1.isDead() || castleP2.isDead();
+		return castles.get(P1_INDEX).isDead() || castles.get(P2_INDEX).isDead();
 	}
 	
-	public boolean isCastle1Dead() {
-		return castleP1.isDead();
+	public int getCastle1Health() {
+		return castles.get(P1_INDEX).getHealth();
 	}
 	
-	public void addUnitFromPlayer(Unit unit, int player) {
-		if (unit != null) {
+	public int getCastle2Health() {
+		return castles.get(P2_INDEX).getHealth();
+	}
+	
+	public void addUnitFromPlayer(int unitIndex, int player) {
+		final int playerIndex = player - 1;
+		if (UnitManager.isValidIndex(unitIndex)
+				&& UnitManager.getCost(unitIndex) <= goldArray[playerIndex]) {
+			
+			goldArray[playerIndex] -= UnitManager.getCost(unitIndex);
+			Unit unit = UnitManager.createUnit(unitIndex);
 			getUnitsFromPlayer(player).add(unit);
 			gui.addSprite(player, unit);
 		}
 	}
 	
 	protected List<Unit> getUnitsFromPlayer(int player) {
-		return player == 1 ? unitsP1 : unitsP2;
+		return units.get(player-1);
 	}
 
 	public void executeBattle() {
-		attackOtherTeam(unitsP1, unitsP2, castleP2);
-		attackOtherTeam(unitsP2, unitsP1, castleP1);
+		attackOtherTeam(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
+		attackOtherTeam(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
 		removeDeads();
 	}
 	
@@ -145,19 +184,16 @@ public class Battleground {
 	}
 	
 	protected void removeDeads() {
-		removeDeadUnits(unitsP1);
-		removeDeadUnits(unitsP2);
-	}
-	
-	protected static void removeDeadUnits(List<Unit> units) {
 		Iterator<Unit> iterator;
 		Unit unit;
 		
-		iterator = units.iterator();
-		while (iterator.hasNext()) {
-			unit = iterator.next();
-			if (unit.isDead()) {
-				iterator.remove();
+		for (List<Unit> playerUnits : units) {
+			iterator = playerUnits.iterator();
+			while (iterator.hasNext()) {
+				unit = iterator.next();
+				if (unit.isDead()) {
+					iterator.remove();
+				}
 			}
 		}
 	}

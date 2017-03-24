@@ -2,7 +2,9 @@ package br.game.castleduel.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class Gui extends JPanel {
 	protected LinkedBlockingQueue<SpriteAbstract> sprites;
 	protected Castle castleP1;
 	protected Castle castleP2;
+	protected int playerWon = -1;
 	
 	public Gui() {}
 	
@@ -56,6 +59,15 @@ public class Gui extends JPanel {
 		jframe.setVisible(true);
 		jframe.setLocationRelativeTo(null);
 	}
+
+	public void setPlayerWon(int player) {
+		playerWon = player;
+	}
+
+	public void updateGame() {
+		repaint();
+		Toolkit.getDefaultToolkit().sync();
+	}
 	
 	public void addSprite(int player, Unit unit) {
 		sprites.add(new SpriteUnit(player, unit));
@@ -70,6 +82,7 @@ public class Gui extends JPanel {
 		super.paintComponent(g);
 		drawBackground(g);
 		drawUnits(g);
+		drawPlayerWon(g);
 	}
 
 	protected void drawBackground(Graphics g) {
@@ -118,5 +131,24 @@ public class Gui extends JPanel {
 				CASTLE_POS_Y, 
 				(int)(CASTLE_HEALTH_WIDTH * castleP2.getHealthPercentage()), 
 				CASTLE_HEALTH_HEIGHT);
+	}
+
+	protected void drawPlayerWon(Graphics g) {
+		if (playerWon == -1) {
+			return;
+		}
+		
+		String printString = "PLAYER " + playerWon + " WON!";
+		if (playerWon == 3) {
+			printString = "DRAW!";
+		}
+		g.setFont(new Font(Font.SERIF, Font.BOLD, 90));
+		g.setColor(Color.black);
+		g.drawString(printString, 10-5, 150-5);
+		g.drawString(printString, 10-5, 150+5);
+		g.drawString(printString, 10+5, 150-5);
+		g.drawString(printString, 10+5, 150+5);
+		g.setColor(Color.white);
+		g.drawString(printString, 10, 150);
 	}
 }
