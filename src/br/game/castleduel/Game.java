@@ -101,14 +101,18 @@ public class Game {
 					1,
 					battleground.getGold(1),
 					battleground.getUnits(1),
-					battleground.getUnits(2)					
+					battleground.getUnits(2),
+					battleground.getCastleHealth(1),
+					battleground.getCastleHealth(2)
 					);
 			battleground.addUnitFromPlayer(unitIndex, 1);
 			unitIndex = playerEngine.runPlayer(
 					2,
 					battleground.getGold(2),
 					battleground.getUnits(2),
-					battleground.getUnits(1)					
+					battleground.getUnits(1),
+					battleground.getCastleHealth(2),
+					battleground.getCastleHealth(1)					
 					);
 			battleground.addUnitFromPlayer(unitIndex, 2);
 		}
@@ -120,8 +124,8 @@ public class Game {
 
 	private void finish() {
 		if (playerWon == -1) {
-			final int castle1Health = battleground.getCastle1Health();
-			final int castle2Health = battleground.getCastle2Health();
+			final int castle1Health = battleground.getCastleHealth(1);
+			final int castle2Health = battleground.getCastleHealth(2);
 			
 			if (castle1Health > castle2Health) {
 				playerWon = 1;

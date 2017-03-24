@@ -10,8 +10,7 @@ import javax.tools.ToolProvider;
 import br.game.castleduel.util.ClassFileFilter;
 
 public class PlayerEngine {
-	private Object player1;
-	private Object player2;
+	private Object[] players = new Object[2];
 	
 	public PlayerEngine() {
 //		deleteAllClassFiles();
@@ -19,24 +18,21 @@ public class PlayerEngine {
 		loadClassFiles();
 	}
 
-	public int runPlayer(int player, int gold, int[] units, int[] enemies) {
-		if (player == 1) {
-			return executeMethodPlayer(player1, gold, units, enemies);
-		}
-		return executeMethodPlayer(player2, gold, units, enemies);
-	}
-	
-	private int executeMethodPlayer(
-			Object player, 
+	public int runPlayer(
+			int playerNumber, 
 			int gold, 
 			int[] units, 
-			int[] enemies) {
+			int[] enemies,
+			int castle,
+			int castleEnemy) {
+		
+		Object player = players[playerNumber-1];
 		
 		try {
 			return (int) player
 							.getClass()
-							.getMethod("play", int.class, int[].class, int[].class)
-							.invoke(player, gold, units, enemies);
+							.getMethod("play", int.class, int[].class, int[].class, int.class, int.class)
+							.invoke(player, gold, units, enemies, castle, castleEnemy);
 		} catch (Exception e) {
 			System.out.println("Error invoking method play from " + player.getClass().getSimpleName());
 			e.printStackTrace();
@@ -84,9 +80,9 @@ public class PlayerEngine {
 			File folder = new File("players");
 			URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {folder.toURI().toURL()});
 			Class<?> clazz = Class.forName("Player1", true, classLoader);
-			player1 = clazz.newInstance();
+			players[0] = clazz.newInstance();
 			clazz = Class.forName("Player2", true, classLoader);
-			player2 = clazz.newInstance();
+			players[1] = clazz.newInstance();
 		} catch (Exception e) {
 			System.out.println("Could not load the .class file.");
 			e.printStackTrace();

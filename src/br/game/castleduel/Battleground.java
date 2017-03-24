@@ -64,12 +64,8 @@ public class Battleground {
 		return castles.get(P1_INDEX).isDead() || castles.get(P2_INDEX).isDead();
 	}
 	
-	public int getCastle1Health() {
-		return castles.get(P1_INDEX).getHealth();
-	}
-	
-	public int getCastle2Health() {
-		return castles.get(P2_INDEX).getHealth();
+	public int getCastleHealth(int player) {
+		return castles.get(player-1).getHealth();
 	}
 	
 	public void addUnitFromPlayer(int unitIndex, int player) {
@@ -89,12 +85,15 @@ public class Battleground {
 	}
 
 	public void executeBattle() {
-		attackOtherTeam(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
-		attackOtherTeam(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
+		attackOrWalk(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
+		attackOrWalk(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
+		attack(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
+		attack(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
+		
 		removeDeads();
 	}
 	
-	protected void attackOtherTeam(
+	protected void attackOrWalk(
 			List<Unit> attackingUnits, 
 			List<Unit> enemies, 
 			Castle enemyCastle
@@ -105,6 +104,19 @@ public class Battleground {
 				continue;
 			}
 			attackingUnit.walk();
+		}
+	}
+	
+	protected void attack(
+			List<Unit> attackingUnits, 
+			List<Unit> enemies, 
+			Castle enemyCastle
+	) {
+		for (Unit attackingUnit : attackingUnits) {
+			if (tryAttackEnemy(attackingUnit, enemies)
+					|| tryAttackCastle(attackingUnit, enemyCastle)) {
+				
+			}
 		}
 	}
 
