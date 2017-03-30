@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import br.game.castleduel.Battleground;
+import br.game.castleduel.Game;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -33,6 +34,7 @@ public class NormalGui extends JPanel implements GuiInterface {
 	protected Castle castleP1;
 	protected Castle castleP2;
 	protected int playerWon = -1;
+	protected int[] gold = new int[2];
 	
 	public NormalGui() {}
 	
@@ -58,6 +60,11 @@ public class NormalGui extends JPanel implements GuiInterface {
 		jframe.pack();
 		jframe.setVisible(true);
 		jframe.setLocationRelativeTo(null);
+	}
+	
+	public void setGold(int goldP1, int goldP2) {
+		gold[0] = goldP1;
+		gold[1] = goldP2;
 	}
 
 	public void setPlayerWon(int player) {
@@ -96,6 +103,27 @@ public class NormalGui extends JPanel implements GuiInterface {
 		
 		g.drawImage(castle, 0, 0, null);
 		g.drawImage(castle, getWidth() - castle.getWidth(), 0, null);
+
+		g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
+		drawOutline(g, "$"+gold[0], 200, 35);
+		drawOutline(g, "$"+gold[1], 530, 35);
+		g.setColor(Color.YELLOW);
+		g.drawString("$"+gold[0], 200, 35);
+		g.drawString("$"+gold[1], 530, 35);
+		
+		final int framesLeft = (Game.FRAME_LIMIT - Game.getCURRENT_FRAME()) / 100;
+		drawOutline(g, "Time: "+framesLeft, 310, 35);
+		g.setColor(Color.red);
+		g.drawString("Time: "+framesLeft, 310, 35);
+	}
+	
+	protected void drawOutline(Graphics g, String text, int x, int y) {
+		g.setColor(Color.BLACK);
+		for (int i = -1; i < 2; i+=2) {
+			for (int j = -1; j < 2; j+=2) {
+				g.drawString(text, x+i, y+j);
+			}
+		}
 	}
 	
 	protected void drawUnits(Graphics g) {

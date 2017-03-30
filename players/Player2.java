@@ -1,6 +1,6 @@
 public class Player2 {
 
-	boolean buy = false;
+	int action = 0;
 	
 	public int play(
 			int gold, 
@@ -10,11 +10,15 @@ public class Player2 {
 			int castleEnemy
 			) {
 		
-		if (gold >= 25) {
-			buy = true;
+		if (action == 0 && gold >= 30) {
+			action = 1;
 		}
-		if (buy) {
-			return 3;
+		if (action == 1) {
+			action = 2;
+			return 4;
+		}
+		if (action == 2) {
+			return 4;
 		}
 		return -1;
 	}

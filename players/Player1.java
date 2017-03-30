@@ -10,11 +10,11 @@ public class Player1 {
 			int castleEnemy
 			) {
 		
-		if (gold >= 29) {
+		if (gold >= 19) {
 			buy = true;
 		}
 		if (buy) {
-			return 0;
+			return 1;
 		}
 		return -1;
 	}

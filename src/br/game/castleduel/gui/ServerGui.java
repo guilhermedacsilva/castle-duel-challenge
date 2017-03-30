@@ -25,5 +25,9 @@ public class ServerGui implements GuiInterface {
 	@Override
 	public void addSpriteAbstract(SpriteAbstract sprite) {
 	}
+	
+	@Override
+	public void setGold(int gold, int gold2) {
+	}
 
 }

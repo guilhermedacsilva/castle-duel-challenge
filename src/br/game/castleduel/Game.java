@@ -6,7 +6,7 @@ import br.game.castleduel.gui.ServerGui;
 import br.game.castleduel.player.PlayerEngine;
 
 public class Game {
-	private static final int FRAME_LIMIT = 60 * 60 * 5;
+	public static final int FRAME_LIMIT = 60 * 60 * 5;
 	private static int FPS = 60;
 	private static int FRAME_TIME = 1000 / FPS;
 	private static int CURRENT_FRAME = 0;

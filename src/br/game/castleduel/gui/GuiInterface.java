@@ -19,4 +19,6 @@ public interface GuiInterface {
 	public void addSprite(int player, Unit unit);
 	
 	public void addSpriteAbstract(SpriteAbstract sprite);
+
+	public void setGold(int gold, int gold2);
 }

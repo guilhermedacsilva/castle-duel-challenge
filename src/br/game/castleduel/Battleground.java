@@ -91,6 +91,7 @@ public class Battleground {
 		attack(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
 		
 		removeDeads();
+		gui.setGold(getGold(1), getGold(2));
 	}
 	
 	protected void attackOrWalk(
