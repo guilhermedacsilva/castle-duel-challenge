@@ -1,6 +1,7 @@
 package br.game.castleduel.time;
 
 public class GameTime {
+	protected static final int FPS_MIN = 20;
 	protected static final int FRAME_LIMIT = 60 * 60 * 5;
 	protected static final int FRAME_PLAYER = 13;
 	protected static final int FRAME_GOLD = FRAME_PLAYER * 6;
@@ -11,9 +12,11 @@ public class GameTime {
 	private long currentFrameFinishTime;
 	private long sleepTime;
 	
-	public void setFps(int fps) {
-		this.fps = fps;
-		frameTime = 1000 / fps;
+	public GameTime(int fps) {
+		if (fps >= FPS_MIN) {
+			this.fps = fps;
+			frameTime = 1000 / fps;
+		}
 	}
 	
 	public boolean canContinue() {

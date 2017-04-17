@@ -14,13 +14,11 @@ public interface GuiInterface {
 
 	public void setPlayerWon(int player);
 
-	public void updateGame();
+	public void updateGame(int framesLeft);
 	
 	public void addSprite(int player, Unit unit);
 	
 	public void addSpriteAbstract(SpriteAbstract sprite);
 
 	public void setGold(int gold, int gold2);
-	
-	public void setFramesLeft(int framesLeft);
 }

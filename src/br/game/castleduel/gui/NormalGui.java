@@ -71,7 +71,8 @@ public class NormalGui extends JPanel implements GuiInterface {
 		playerWon = player;
 	}
 
-	public void updateGame() {
+	public void updateGame(int framesLeft) {
+		this.framesLeft = framesLeft;
 		repaint();
 		Toolkit.getDefaultToolkit().sync();
 	}
@@ -82,10 +83,6 @@ public class NormalGui extends JPanel implements GuiInterface {
 	
 	public void addSpriteAbstract(SpriteAbstract sprite) {
 		sprites.add(sprite);
-	}
-	
-	public void setFramesLeft(int framesLeft) {
-		this.framesLeft = framesLeft;
 	}
 
 	@Override

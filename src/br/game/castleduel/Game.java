@@ -10,76 +10,40 @@ import br.game.castleduel.time.FixedTimeRunnable;
 import br.game.castleduel.time.GameTime;
 
 public class Game implements FixedTimeRunnable {
-	protected static final String CONFIG_FPS = "fps";
-	protected static final String CONFIG_SERVER = "server";
 	protected GameTime time;
 	protected Battleground battleground;
-	protected PlayerFacade playerEngine;
+	protected PlayerFacade players;
 	protected GuiInterface gui;
-	protected int playerWon = -1;
-	protected boolean server = false;
-	
-	public static void main(String[] args) {
-		new Game(args).execute();
-	}
-	
-	public Game(String[] args) {
-		time = new GameTime();
-		parseConfigs(args);
-	}
-	
-	protected void parseConfigs(String[] configs) {
-		for (String config : configs) {
-			tryConfigFps(config);
-			tryConfigServer(config);
-		}
-	}
-	
-	protected void tryConfigFps(String config) {
-		if (config.startsWith(CONFIG_FPS)) {
-			int fps = Integer.parseInt(config.substring(3));
-			time.setFps(fps);
-		}
-	}
-	
-	protected void tryConfigServer(String config) {
-		if (config.startsWith(CONFIG_SERVER)) {
-			server = true;
-		}
-	}
+	protected int playerWonNumber = -1;
 
-	protected void execute() {
-		loadGame();
-		if (playerWon == -1) {
-			if (server) {
+	public void play(boolean isServer, int fps) {
+		loadPlayers();
+		loadGameLogic(isServer, fps);
+		runGameLoop(isServer);
+		finish();
+	}
+	
+	protected void loadPlayers() {
+		try {
+			players = new PlayerFacade();
+		} catch (PlayerException e) {
+			playerWonNumber = e.player != 1 ? 1 : 2;
+		}
+	}
+	
+	protected void loadGameLogic(boolean isServer, int fps) {
+		time = new GameTime(fps);
+		gui = isServer ? new ServerGui() : new NormalGui();
+		battleground = new Battleground(gui);
+	}
+	
+	protected void runGameLoop(boolean isServer) {
+		if (playerWonNumber == -1) {
+			if (isServer) {
 				runGameLoopServer();
 			} else {
 				runGameLoopNormal();
 			}
-		}
-		finish();
-	}
-
-	private void loadGame() {
-		try {
-			playerEngine = new PlayerFacade();
-		} catch (PlayerException e) {
-			playerWon = e.player != 1 ? 1 : 2;
-		}
-		gui = server ? new ServerGui() : new NormalGui();
-		battleground = new Battleground(gui);
-	}
-	
-	@Override
-	public void runWithFixedTime() {
-		runBattle();
-		gui.setFramesLeft(time.getFramesLeft());
-		gui.updateGame();
-	}
-
-	private void runGameLoopNormal() {
-		while (!battleground.isFinished() && time.canContinue()) {
-			time.runWithSleep(this);
 		}
 	}
 	
@@ -88,6 +52,18 @@ public class Game implements FixedTimeRunnable {
 			runBattle();
 			time.nextFrame();
 		}
+	}
+
+	private void runGameLoopNormal() {
+		while (!battleground.isFinished() && time.canContinue()) {
+			time.runWithSleep(this);
+		}
+	}
+	
+	@Override
+	public void runWithFixedTime() {
+		runBattle();
+		gui.updateGame(time.getFramesLeft());
 	}
 
 	private void runBattle() {
@@ -103,23 +79,24 @@ public class Game implements FixedTimeRunnable {
 	private void runPlayers() {
 		for (int i = 0; i < 2; i++) {
 			final PlayerInfo info = battleground.getPlayerInfo(i);
-			final int unitIndex = playerEngine.callPlay(info);
+			final int unitIndex = players.callPlay(info);
 			battleground.addUnitFromPlayer(unitIndex, i);	
 		}
 	}
 
 	private void finish() {
-		if (playerWon == -1) {
+		if (playerWonNumber == -1) {
 			PlayerInfo player0 = battleground.getPlayerInfo(0);			
 			if (player0.castle > player0.castleEnemy) {
-				playerWon = 1;
+				playerWonNumber = 1;
 			} else if (player0.castle < player0.castleEnemy) {
-				playerWon = 2;
+				playerWonNumber = 2;
 			} else {
-				playerWon = 3;
+				playerWonNumber = 3;
 			}
 		}
-		gui.setPlayerWon(playerWon);
-		gui.updateGame();
+		gui.setPlayerWon(playerWonNumber);
+		gui.updateGame(0);
 	}
+
 }

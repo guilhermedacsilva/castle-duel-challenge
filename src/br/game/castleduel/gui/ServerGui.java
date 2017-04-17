@@ -15,7 +15,7 @@ public class ServerGui implements GuiInterface {
 	}
 
 	@Override
-	public void updateGame() {
+	public void updateGame(int framesLeft) {
 	}
 
 	@Override
@@ -28,9 +28,5 @@ public class ServerGui implements GuiInterface {
 	
 	@Override
 	public void setGold(int gold, int gold2) {
-	}
-
-	@Override
-	public void setFramesLeft(int framesLeft) {
 	}
 }
