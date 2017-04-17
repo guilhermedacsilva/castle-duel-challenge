@@ -30,4 +30,7 @@ public class ServerGui implements GuiInterface {
 	public void setGold(int gold, int gold2) {
 	}
 
+	@Override
+	public void setFramesLeft(int framesLeft) {
+	}
 }

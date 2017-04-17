@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import br.game.castleduel.Battleground;
-import br.game.castleduel.Game;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -35,6 +34,7 @@ public class NormalGui extends JPanel implements GuiInterface {
 	protected Castle castleP2;
 	protected int playerWon = -1;
 	protected int[] gold = new int[2];
+	protected int framesLeft;
 	
 	public NormalGui() {}
 	
@@ -83,6 +83,10 @@ public class NormalGui extends JPanel implements GuiInterface {
 	public void addSpriteAbstract(SpriteAbstract sprite) {
 		sprites.add(sprite);
 	}
+	
+	public void setFramesLeft(int framesLeft) {
+		this.framesLeft = framesLeft;
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -111,7 +115,6 @@ public class NormalGui extends JPanel implements GuiInterface {
 		g.drawString("$"+gold[0], 200, 35);
 		g.drawString("$"+gold[1], 530, 35);
 		
-		final int framesLeft = (Game.FRAME_LIMIT - Game.getCURRENT_FRAME()) / 100;
 		drawOutline(g, "Time: "+framesLeft, 310, 35);
 		g.setColor(Color.red);
 		g.drawString("Time: "+framesLeft, 310, 35);

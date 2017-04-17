@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.game.castleduel.gui.GuiInterface;
 import br.game.castleduel.gui.SpriteExplosion;
+import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 import br.game.castleduel.unit.UnitManager;
@@ -18,31 +19,30 @@ public class Battleground {
 
 	protected GuiInterface gui;
 	protected List<List<Unit>> units = new ArrayList<List<Unit>>(2);
-	protected List<Castle> castles = new ArrayList<Castle>(2);
+	protected Castle[] castles = new Castle[2];
 	protected int[] goldArray = new int[] {0, 0};
 	protected int[][] unitCountMatrix = new int[2][6];
 	
 	public Battleground(GuiInterface gui) {
-		castles.add(new Castle(1));
-		castles.add(new Castle(2));
+		castles[0] = new Castle(1);
+		castles[1] = new Castle(2);
 		units.add(new ArrayList<Unit>(100));
 		units.add(new ArrayList<Unit>(100));
-		gui.init(BATTLEGROUND_WIDTH, castles.get(P1_INDEX), castles.get(P2_INDEX));
+		gui.init(BATTLEGROUND_WIDTH, castles[0], castles[1]);
 		this.gui = gui;
+		updateUnitCountMatrix();
 	}
 	
-	public void gainGold() {
-		goldArray[P1_INDEX]++;
-		goldArray[P2_INDEX]++;
-	}
-
-	public int getGold(int player) {
-		return goldArray[player-1];
-	}
-
-	public int[] getUnits(int player) {
-		updateUnitCountMatrix();
-		return unitCountMatrix[player-1];
+	public PlayerInfo getPlayerInfo(int playerIndex) {
+		final int enemyIndex = 1 - playerIndex;
+		return new PlayerInfo(
+				playerIndex,
+				goldArray[playerIndex],
+				unitCountMatrix[playerIndex],
+				unitCountMatrix[enemyIndex],
+				castles[playerIndex].getHealth(),
+				castles[enemyIndex].getHealth()
+		);
 	}
 	
 	private void updateUnitCountMatrix() {
@@ -59,24 +59,24 @@ public class Battleground {
 			}
 		}
 	}
+	
+	public void gainGold() {
+		goldArray[P1_INDEX]++;
+		goldArray[P2_INDEX]++;
+	}
 
 	public boolean isFinished() {
-		return castles.get(P1_INDEX).isDead() || castles.get(P2_INDEX).isDead();
+		return castles[0].isDead() || castles[1].isDead();
 	}
 	
-	public int getCastleHealth(int player) {
-		return castles.get(player-1).getHealth();
-	}
-	
-	public void addUnitFromPlayer(int unitIndex, int player) {
-		final int playerIndex = player - 1;
+	public void addUnitFromPlayer(int unitIndex, int playerIndex) {
 		if (UnitManager.isValidIndex(unitIndex)
 				&& UnitManager.getCost(unitIndex) <= goldArray[playerIndex]) {
 			
 			goldArray[playerIndex] -= UnitManager.getCost(unitIndex);
 			Unit unit = UnitManager.createUnit(unitIndex);
-			getUnitsFromPlayer(player).add(unit);
-			gui.addSprite(player, unit);
+			getUnitsFromPlayer(playerIndex+1).add(unit);
+			gui.addSprite(playerIndex+1, unit);
 		}
 	}
 	
@@ -85,13 +85,15 @@ public class Battleground {
 	}
 
 	public void executeBattle() {
-		attackOrWalk(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
-		attackOrWalk(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
-		attack(units.get(P1_INDEX), units.get(P2_INDEX), castles.get(P2_INDEX));
-		attack(units.get(P2_INDEX), units.get(P1_INDEX), castles.get(P1_INDEX));
+		attackOrWalk(units.get(P1_INDEX), units.get(P2_INDEX), castles[1]);
+		attackOrWalk(units.get(P2_INDEX), units.get(P1_INDEX), castles[0]);
+		attack(units.get(P1_INDEX), units.get(P2_INDEX), castles[1]);
+		attack(units.get(P2_INDEX), units.get(P1_INDEX), castles[0]);
 		
 		removeDeads();
-		gui.setGold(getGold(1), getGold(2));
+		decreaseCooldowns();
+		gui.setGold(goldArray[0], goldArray[1]);
+		updateUnitCountMatrix();
 	}
 	
 	protected void attackOrWalk(
@@ -166,7 +168,7 @@ public class Battleground {
 			}
 		}
 		if (hit) {
-			unit.updateCooldown();
+			unit.setCooldown();
 		}
 		return enemyInRange;
 	}
@@ -207,6 +209,14 @@ public class Battleground {
 				if (unit.isDead()) {
 					iterator.remove();
 				}
+			}
+		}
+	}
+	
+	protected void decreaseCooldowns() {
+		for (List<Unit> playerUnits : units) {
+			for (Unit unit : playerUnits) {
+				unit.decreaseCooldown();
 			}
 		}
 	}

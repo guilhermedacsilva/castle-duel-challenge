@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import br.game.castleduel.Game;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -16,7 +15,7 @@ public class SpriteExplosion extends SpriteAbstract {
 	private static final int STATE_WIDTH_HEIGHT_ORIGINAL = 128;
 	private static final int STATE_WIDTH_HEIGHT_SCALED = 128 / 2;
 	private static final Random RANDOM = new Random();
-	private int nextStateFrame = 0;
+	private int currentFrame = -1;
 	private int currentState = 0;
 	private SpriteAbstract spriteUnit;
 	private int offsetX;
@@ -35,39 +34,19 @@ public class SpriteExplosion extends SpriteAbstract {
 	}
 
 	@Override
-	public boolean shouldDelete() {
-		return currentState > LAST_STATE;
-	}
-
-	@Override
 	public void paint(Graphics g) {
-		if (isFirstTimeRunning()) {
-			updateNextStateFrame();
-			
-		} else if (shouldChangeState()) {
-			updateNextStateFrame();
-			updateState();
-		}
+		currentFrame++;
+		currentState = currentFrame / STATE_DURATION_FRAMES;
+		
 		if (shouldDelete()) {
 			return;
 		}
 		drawExplosion(g);
 	}
-	
-	private boolean isFirstTimeRunning() {
-		return nextStateFrame == 0;
-	}
-	
-	private boolean shouldChangeState() {
-		return Game.getCURRENT_FRAME() >= nextStateFrame;
-	}
-	
-	private void updateNextStateFrame() {
-		nextStateFrame = Game.getCURRENT_FRAME() + STATE_DURATION_FRAMES;
-	}
 
-	private void updateState() {
-		currentState++;
+	@Override
+	public boolean shouldDelete() {
+		return currentState > LAST_STATE;
 	}
 	
 	private void drawExplosion(Graphics g) {

@@ -21,4 +21,6 @@ public interface GuiInterface {
 	public void addSpriteAbstract(SpriteAbstract sprite);
 
 	public void setGold(int gold, int gold2);
+	
+	public void setFramesLeft(int framesLeft);
 }

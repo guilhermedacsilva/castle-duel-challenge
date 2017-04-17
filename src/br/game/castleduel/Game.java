@@ -1,39 +1,55 @@
 package br.game.castleduel;
 
+import br.game.castleduel.exception.PlayerException;
 import br.game.castleduel.gui.GuiInterface;
 import br.game.castleduel.gui.NormalGui;
 import br.game.castleduel.gui.ServerGui;
-import br.game.castleduel.player.PlayerEngine;
+import br.game.castleduel.player.PlayerFacade;
+import br.game.castleduel.player.PlayerInfo;
+import br.game.castleduel.time.FixedTimeRunnable;
+import br.game.castleduel.time.GameTime;
 
-public class Game {
-	public static final int FRAME_LIMIT = 60 * 60 * 5;
-	private static int FPS = 60;
-	private static int FRAME_TIME = 1000 / FPS;
-	private static int CURRENT_FRAME = 0;
-	private static final int FRAME_PLAYER = 13;
-	private static final int FRAME_GOLD = FRAME_PLAYER * 6;
-	private boolean server = false;
-
-	private Battleground battleground;
-	private PlayerEngine playerEngine;
-	private GuiInterface gui;
-	private int playerWon = -1;
+public class Game implements FixedTimeRunnable {
+	protected static final String CONFIG_FPS = "fps";
+	protected static final String CONFIG_SERVER = "server";
+	protected GameTime time;
+	protected Battleground battleground;
+	protected PlayerFacade playerEngine;
+	protected GuiInterface gui;
+	protected int playerWon = -1;
+	protected boolean server = false;
+	
+	public static void main(String[] args) {
+		new Game(args).execute();
+	}
 	
 	public Game(String[] args) {
-		for (String config : args) {
-			if (config.startsWith("fps")) {
-				FPS = Integer.parseInt(config.substring(3));
-				FRAME_TIME = 1000 / FPS;
-			
-			} else if (config.startsWith("server")) {
-				server = true;
-				
-			}
+		time = new GameTime();
+		parseConfigs(args);
+	}
+	
+	protected void parseConfigs(String[] configs) {
+		for (String config : configs) {
+			tryConfigFps(config);
+			tryConfigServer(config);
+		}
+	}
+	
+	protected void tryConfigFps(String config) {
+		if (config.startsWith(CONFIG_FPS)) {
+			int fps = Integer.parseInt(config.substring(3));
+			time.setFps(fps);
+		}
+	}
+	
+	protected void tryConfigServer(String config) {
+		if (config.startsWith(CONFIG_SERVER)) {
+			server = true;
 		}
 	}
 
-	private void start() {
-		loadAll();
+	protected void execute() {
+		loadGame();
 		if (playerWon == -1) {
 			if (server) {
 				runGameLoopServer();
@@ -44,108 +60,66 @@ public class Game {
 		finish();
 	}
 
-	private void loadAll() {
+	private void loadGame() {
 		try {
-			playerEngine = new PlayerEngine();
-		} catch (RuntimeException e) {
-			playerWon = Integer.valueOf(e.getMessage());
+			playerEngine = new PlayerFacade();
+		} catch (PlayerException e) {
+			playerWon = e.player != 1 ? 1 : 2;
 		}
-		
 		gui = server ? new ServerGui() : new NormalGui();
-		
 		battleground = new Battleground(gui);
+	}
+	
+	@Override
+	public void runWithFixedTime() {
+		runBattle();
+		gui.setFramesLeft(time.getFramesLeft());
+		gui.updateGame();
 	}
 
 	private void runGameLoopNormal() {
-		long timeAfterFrame;
-		long sleepTime;
-
-		while (!battleground.isFinished()
-				&& CURRENT_FRAME < FRAME_LIMIT) {
-			
-			timeAfterFrame = now() + FRAME_TIME;
-
-			runBattle();
-			gui.updateGame();
-
-			sleepTime = timeAfterFrame - now();
-			if (sleepTime > 0) {
-				try {
-					Thread.sleep(sleepTime);
-				} catch (InterruptedException e) {
-				}
-			}
-
-			CURRENT_FRAME++;
+		while (!battleground.isFinished() && time.canContinue()) {
+			time.runWithSleep(this);
 		}
 	}
 	
 	private void runGameLoopServer() {
-		while (!battleground.isFinished()
-				&& CURRENT_FRAME < FRAME_LIMIT) {
-
+		while (!battleground.isFinished() && time.canContinue()) {
 			runBattle();
-
-			CURRENT_FRAME++;
+			time.nextFrame();
 		}
-	}
-
-	private static long now() {
-		return System.currentTimeMillis();
 	}
 
 	private void runBattle() {
-		if (CURRENT_FRAME % FRAME_PLAYER == 0) {
-			int unitIndex;
-			unitIndex = playerEngine.runPlayer(
-					1,
-					battleground.getGold(1),
-					battleground.getUnits(1),
-					battleground.getUnits(2),
-					battleground.getCastleHealth(1),
-					battleground.getCastleHealth(2)
-					);
-			battleground.addUnitFromPlayer(unitIndex, 1);
-			unitIndex = playerEngine.runPlayer(
-					2,
-					battleground.getGold(2),
-					battleground.getUnits(2),
-					battleground.getUnits(1),
-					battleground.getCastleHealth(2),
-					battleground.getCastleHealth(1)					
-					);
-			battleground.addUnitFromPlayer(unitIndex, 2);
+		if (time.canPlayersPlay()) {
+			runPlayers();
 		}
-		if (CURRENT_FRAME % FRAME_GOLD == 0) {
+		if (time.canReceiveGold()) {
 			battleground.gainGold();
 		}
 		battleground.executeBattle();
 	}
+	
+	private void runPlayers() {
+		for (int i = 0; i < 2; i++) {
+			final PlayerInfo info = battleground.getPlayerInfo(i);
+			final int unitIndex = playerEngine.callPlay(info);
+			battleground.addUnitFromPlayer(unitIndex, i);	
+		}
+	}
 
 	private void finish() {
 		if (playerWon == -1) {
-			final int castle1Health = battleground.getCastleHealth(1);
-			final int castle2Health = battleground.getCastleHealth(2);
-			
-			if (castle1Health > castle2Health) {
+			PlayerInfo player0 = battleground.getPlayerInfo(0);			
+			if (player0.castle > player0.castleEnemy) {
 				playerWon = 1;
-			} else if (castle1Health < castle2Health) {
+			} else if (player0.castle < player0.castleEnemy) {
 				playerWon = 2;
 			} else {
 				playerWon = 3;
 			}
 		}
-		
 		gui.setPlayerWon(playerWon);
 		gui.updateGame();
 	}
-
-	public static int getCURRENT_FRAME() {
-		return CURRENT_FRAME;
-	}
-
-	public static void main(String[] args) {
-		new Game(args).start();
-	}
-
 }

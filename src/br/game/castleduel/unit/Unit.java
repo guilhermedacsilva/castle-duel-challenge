@@ -1,6 +1,5 @@
 package br.game.castleduel.unit;
 
-import br.game.castleduel.Game;
 import br.game.castleduel.gui.SpriteUnit;
 
 public class Unit extends LivingBeing {
@@ -17,7 +16,7 @@ public class Unit extends LivingBeing {
 	protected int range;
 	protected int gold;
 	protected int position = 0;
-	protected long frameNextAttack = 0;
+	protected long cooldown = 0;
 	private SpriteUnit sprite;
 
 	protected Unit(int type, int gold, int health, int attack) {
@@ -76,24 +75,30 @@ public class Unit extends LivingBeing {
 	}
 
 	public boolean attackWithCooldown(LivingBeing enemy) {
-		if (Game.getCURRENT_FRAME() >= frameNextAttack) {
+		if (cooldown == 0) {
 			enemy.looseHealth(attack);
-			frameNextAttack = Game.getCURRENT_FRAME() + ATTACK_DELAY_FRAMES;
+			cooldown = ATTACK_DELAY_FRAMES;
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean attackWithNoCooldown(LivingBeing enemy) {
-		if (Game.getCURRENT_FRAME() >= frameNextAttack) {
+		if (cooldown == 0) {
 			enemy.looseHealth(attack);
 			return true;
 		}
 		return false;
 	}
 	
-	public void updateCooldown() {
-		frameNextAttack = Game.getCURRENT_FRAME() + ATTACK_DELAY_FRAMES;
+	public void setCooldown() {
+		cooldown = ATTACK_DELAY_FRAMES;
+	}
+	
+	public void decreaseCooldown() {
+		if (cooldown > 0) {
+			cooldown--;
+		}
 	}
 
 	public void setSprite(SpriteUnit sprite) {
