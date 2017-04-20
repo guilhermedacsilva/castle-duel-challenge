@@ -1,15 +1,15 @@
 package br.game.castleduel.unit;
 
-public class Castle extends LivingBeing {
-	private int player;
+public class Castle extends Killable {
+	private int playerIndex;
 	
-	public Castle(int player) {
+	public Castle(int playerIndex) {
 		health = 120;
 		healthMax = health;
-		this.player = player;
+		this.playerIndex = playerIndex;
 	}
 	
-	public int getPlayer() {
-		return player;
+	public int getPlayerIndex() {
+		return playerIndex;
 	}
 }

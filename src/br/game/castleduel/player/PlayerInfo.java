@@ -10,17 +10,15 @@ public class PlayerInfo {
 	
 	public PlayerInfo(
 			int playerIndex, 
-			int gold, 
 			int[] units, 
 			int[] enemies, 
 			int castle, 
 			int castleEnemy)
 	{
 		this.playerIndex = playerIndex;
-		this.gold = gold;
 		this.units = units;
 		this.enemies = enemies;
 		this.castle = castle;
 		this.castleEnemy = castleEnemy;
-	}	
+	}
 }

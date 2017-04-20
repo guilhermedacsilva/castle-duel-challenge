@@ -5,134 +5,119 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.game.castleduel.gui.GuiInterface;
+import br.game.castleduel.gui.sprite.Sprite;
 import br.game.castleduel.gui.sprite.SpriteCastle;
 import br.game.castleduel.gui.sprite.SpriteExplosion;
 import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
-import br.game.castleduel.unit.UnitManager;
+import br.game.castleduel.util.Matrix;
 
 public class Battleground {
 	public static final int BATTLEGROUND_WIDTH = 800;
 	public static final int CASTLE_POSITION = 750;
-	private static final int P1_INDEX = 0;
-	private static final int P2_INDEX = 1;
+	private static final int QNT_PLAYERS = 2;
 
 	protected GuiInterface gui;
-	protected List<List<Unit>> units = new ArrayList<List<Unit>>(2);
-	protected Castle[] castles = new Castle[2];
-	protected int[] goldArray = new int[] {0, 0};
-	protected int[][] unitCountMatrix = new int[2][6];
+	protected List<List<Unit>> units = new ArrayList<List<Unit>>(QNT_PLAYERS);
+	protected Castle[] castles = new Castle[QNT_PLAYERS];
+	protected int[][] unitFrequency = new int[QNT_PLAYERS][6];
 	
 	public Battleground(GuiInterface gui) {
-		castles[0] = new Castle(1);
-		castles[1] = new Castle(2);
-		units.add(new ArrayList<Unit>(100));
-		units.add(new ArrayList<Unit>(100));
-		gui.init(BATTLEGROUND_WIDTH, castles[0], castles[1]);
 		this.gui = gui;
-		updateUnitCountMatrix();
+		for (int index = 0; index < QNT_PLAYERS; index++) {
+			castles[index] = new Castle(index);
+			units.add(new ArrayList<Unit>(20));	
+		}
+		gui.init(BATTLEGROUND_WIDTH, castles[0], castles[1]);
+		calculateUnitFrequency();
+	}
+	
+	private void calculateUnitFrequency() {
+		Matrix.reset(unitFrequency);
+		for (int playerIndex = 0; playerIndex < QNT_PLAYERS; playerIndex++) {
+			for (Unit unit : units.get(playerIndex)) {
+				unitFrequency[playerIndex][unit.getType()]++;
+			}
+		}
 	}
 	
 	public PlayerInfo getPlayerInfo(int playerIndex) {
-		final int enemyIndex = 1 - playerIndex;
+		final int enemyIndex = getEnemyIndex(playerIndex);
 		return new PlayerInfo(
 				playerIndex,
-				goldArray[playerIndex],
-				unitCountMatrix[playerIndex],
-				unitCountMatrix[enemyIndex],
+				unitFrequency[playerIndex],
+				unitFrequency[enemyIndex],
 				castles[playerIndex].getHealth(),
 				castles[enemyIndex].getHealth()
 		);
 	}
 	
-	private void updateUnitCountMatrix() {
-		for (int i = 0; i < unitCountMatrix.length; i++) {
-			for (int j = 0; j < unitCountMatrix[i].length; j++) {
-				unitCountMatrix[i][j] = 0;
-			}
-		}
-		List<Unit> playerUnits;
-		for (int playerIndex = 0; playerIndex < units.size(); playerIndex++) {
-			playerUnits = units.get(playerIndex);
-			for (Unit unit : playerUnits) {
-				unitCountMatrix[playerIndex][unit.getType()]++;
-			}
-		}
-	}
-	
-	public void gainGold() {
-		goldArray[P1_INDEX]++;
-		goldArray[P2_INDEX]++;
+	protected int getEnemyIndex(int playerIndex) {
+		return 1 - playerIndex;
 	}
 
 	public boolean isFinished() {
 		return castles[0].isDead() || castles[1].isDead();
 	}
 	
-	public void addUnitFromPlayer(int unitIndex, int playerIndex) {
-		if (UnitManager.isValidIndex(unitIndex)
-				&& UnitManager.getCost(unitIndex) <= goldArray[playerIndex]) {
-			
-			goldArray[playerIndex] -= UnitManager.getCost(unitIndex);
-			Unit unit = UnitManager.createUnit(unitIndex);
-			getUnitsFromPlayer(playerIndex+1).add(unit);
-			gui.addSprite(playerIndex+1, unit);
-		}
-	}
-	
-	protected List<Unit> getUnitsFromPlayer(int player) {
-		return units.get(player-1);
+	public void addUnit(Unit unit) {
+		units.get(unit.getPlayerIndex()).add(unit);
 	}
 
 	public void executeBattle() {
-		attackOrWalk(units.get(P1_INDEX), units.get(P2_INDEX), castles[1]);
-		attackOrWalk(units.get(P2_INDEX), units.get(P1_INDEX), castles[0]);
-		attack(units.get(P1_INDEX), units.get(P2_INDEX), castles[1]);
-		attack(units.get(P2_INDEX), units.get(P1_INDEX), castles[0]);
-		
+		attackAndWalkAllUnits();
 		removeDeads();
 		decreaseCooldowns();
-		gui.setGold(goldArray[0], goldArray[1]);
-		updateUnitCountMatrix();
+		calculateUnitFrequency();
 	}
 	
-	protected void attackOrWalk(
-			List<Unit> attackingUnits, 
-			List<Unit> enemies, 
-			Castle enemyCastle
-	) {
-		for (Unit attackingUnit : attackingUnits) {
-			if (tryAttackEnemy(attackingUnit, enemies)
-					|| tryAttackCastle(attackingUnit, enemyCastle)) {
-				continue;
-			}
-			attackingUnit.walk();
+	protected void attackAndWalkAllUnits() {
+		for (int playerIndex = 0; playerIndex < QNT_PLAYERS; playerIndex++) {
+			walkUnitsFrom(playerIndex);
+		}
+		for (int playerIndex = 0; playerIndex < QNT_PLAYERS; playerIndex++) {
+			attackUnitsFrom(playerIndex);
 		}
 	}
 	
-	protected void attack(
-			List<Unit> attackingUnits, 
-			List<Unit> enemies, 
-			Castle enemyCastle
-	) {
-		for (Unit attackingUnit : attackingUnits) {
-			if (tryAttackEnemy(attackingUnit, enemies)
-					|| tryAttackCastle(attackingUnit, enemyCastle)) {
-				
+	protected void walkUnitsFrom(int playerIndex) {
+		for (Unit unit : units.get(playerIndex)) {
+			if (!isEnemyInAttackRange(unit)) {
+				unit.walk();
 			}
+		}
+	}
+	
+	protected boolean isEnemyInAttackRange(Unit attackingUnit) {
+		int enemyIndex = getEnemyIndex(attackingUnit.getPlayerIndex());
+		for (Unit enemy : units.get(enemyIndex)) {
+			if (isInAttackRange(attackingUnit, enemy)) {
+				return true;
+			}
+		}
+		return isInCastleRange(attackingUnit);
+	}
+	
+	protected void attackUnitsFrom(int playerIndex) {
+		final int enemyIndex = getEnemyIndex(playerIndex);
+		for (Unit attackingUnit : units.get(playerIndex)) {
+			tryAttackEnemy(attackingUnit, units.get(enemyIndex));
+			tryAttackCastle(attackingUnit, castles[enemyIndex]);
 		}
 	}
 
-	protected boolean tryAttackEnemy(
+	protected void tryAttackEnemy(
 			Unit unit, 
 			List<Unit> enemies
 			) {
 		
-		if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
-			return tryAttackNormalHit(unit, enemies);
-		} else {
-			return tryAttackHitAll(unit, enemies);
+		if (unit.isReady()) {
+			if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
+				tryAttackNormalHit(unit, enemies);
+			} else {
+				tryAttackHitAll(unit, enemies);
+			}
 		}
 	}
 	
@@ -174,10 +159,7 @@ public class Battleground {
 		return enemyInRange;
 	}
 	
-	protected static boolean isInAttackRange(
-			Unit unit, 
-			Unit enemy
-			) {
+	protected static boolean isInAttackRange(Unit unit, Unit enemy) {
 		int distance = BATTLEGROUND_WIDTH 
 				- unit.getPosition() 
 				- enemy.getPosition();
@@ -189,14 +171,23 @@ public class Battleground {
 			Unit unit, 
 			Castle castle
 			) {
-		int distance = CASTLE_POSITION - unit.getPosition();
-		if (distance <= unit.getRange()) {
+		if (isInCastleRange(unit)) {
 			if (unit.attackWithCooldown(castle)) {
-				gui.addSprite();
+				gui.addSprite(createCastleExplosionSprite(castle));
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	protected boolean isInCastleRange(Unit unit) {
+		int distance = CASTLE_POSITION - unit.getPosition();
+		return distance <= unit.getRange();
+	}
+	
+	protected SpriteExplosion createCastleExplosionSprite(Castle castle) {
+		Sprite target = SpriteCastle.getSprite(castle.getPlayerIndex());
+		return new SpriteExplosion(target);
 	}
 	
 	protected void removeDeads() {

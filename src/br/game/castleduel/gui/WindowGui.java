@@ -15,9 +15,7 @@ import javax.swing.JPanel;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.gui.sprite.Sprite;
-import br.game.castleduel.gui.sprite.SpriteUnit;
 import br.game.castleduel.unit.Castle;
-import br.game.castleduel.unit.Unit;
 import br.game.castleduel.util.ImageLoader;
 
 public class WindowGui extends JPanel implements GuiInterface {
@@ -78,10 +76,6 @@ public class WindowGui extends JPanel implements GuiInterface {
 		this.framesLeft = framesLeft;
 		repaint();
 		Toolkit.getDefaultToolkit().sync();
-	}
-	
-	public void addSprite(int player, Unit unit) {
-		sprites.add(new SpriteUnit(player, unit));
 	}
 	
 	public void addSprite(Sprite sprite) {

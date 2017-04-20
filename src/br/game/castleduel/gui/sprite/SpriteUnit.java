@@ -14,29 +14,28 @@ public class SpriteUnit extends Sprite {
 	private static final int UNIT_HEIGHT = 23;
 	private static final int UNIT_CENTER_X = 8;
 	private static final int UNIT_CENTER_Y = 11;
-	private static int ID_GENERATOR = 0;
 	private static int[] POS_Y_OFFSET = new int[] {0,0}; //p1, p2
-	private final int id;
-	private final int player;
+	private final int playerIndex;
 	private final Unit unit;
 	private int width;
 	private BufferedImage image;
 	private int posY;
 	
-	public SpriteUnit(int player, Unit unit) {
-		this.player = player;
+	public SpriteUnit(int playerIndex, Unit unit) {
+		this.playerIndex = playerIndex;
 		this.unit = unit;
 		width = 50;
-		id = ID_GENERATOR++;
-		image = loadImage(player, unit);
+		image = loadImage(playerIndex, unit);
+		posY = TYPE_DATA[unit.getType()][POS_Y] + POS_Y_OFFSET[playerIndex];
 		
-		posY = TYPE_DATA[unit.getType()][POS_Y] + POS_Y_OFFSET[player-1];
-		POS_Y_OFFSET[player-1] += 25;
-		if (POS_Y_OFFSET[player-1] > 50) {
-			POS_Y_OFFSET[player-1] = 0;
+		nextUnitPositionY(playerIndex);
+	}
+	
+	private static void nextUnitPositionY(int playerIndex) {
+		POS_Y_OFFSET[playerIndex] += 25;
+		if (POS_Y_OFFSET[playerIndex] > 50) {
+			POS_Y_OFFSET[playerIndex] = 0;
 		}
-		
-		unit.setSprite(this);
 	}
 
 	@Override
@@ -76,7 +75,7 @@ public class SpriteUnit extends Sprite {
 
 	@Override
 	public int getPositionX() {
-		if (player == 1) {
+		if (playerIndex == 0) {
 			return unit.getPosition();
 		}
 		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition() - width;
@@ -107,32 +106,13 @@ public class SpriteUnit extends Sprite {
 		return UNIT_CENTER_Y;
 	}
 	
-	protected static BufferedImage loadImage(int player, Unit unit) {
+	protected static BufferedImage loadImage(int playerIndex, Unit unit) {
 		BufferedImage image = ImageLoader.load("unit" + unit.getType() + ".png");
 		image = ImageUtil.copy(image);
-		if (player == 2) {
+		if (playerIndex == 1) {
 			ImageUtil.flip(image);
 		}
 		return image;
-	}
-
-	@Override
-	public int hashCode() {
-		return id;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SpriteUnit other = (SpriteUnit) obj;
-		if (id != other.id)
-			return false;
-		return true;
 	}
 	
 	

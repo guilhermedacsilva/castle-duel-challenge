@@ -2,7 +2,7 @@ package br.game.castleduel.unit;
 
 import br.game.castleduel.gui.sprite.SpriteUnit;
 
-public class Unit extends LivingBeing {
+public class Unit extends Killable {
 	public static final int RANGE_CLOSE = 100;
 	private static int ID_GENERATOR = 0;
 	private static long ATTACK_DELAY_FRAMES = 60; 
@@ -17,6 +17,7 @@ public class Unit extends LivingBeing {
 	protected int gold;
 	protected int position = 0;
 	protected long cooldown = 0;
+	private int playerIndex;
 	private SpriteUnit sprite;
 
 	protected Unit(int type, int gold, int health, int attack) {
@@ -73,22 +74,38 @@ public class Unit extends LivingBeing {
 	public void walk() {
 		position++;
 	}
+	
+	protected void setPlayerIndex(int playerIndex) {
+		this.playerIndex = playerIndex;
+	}
+	
+	public int getPlayerIndex() {
+		return playerIndex;
+	}
 
-	public boolean attackWithCooldown(LivingBeing enemy) {
-		if (cooldown == 0) {
+	public boolean attackWithCooldown(Killable enemy) {
+		if (isReady()) {
 			enemy.looseHealth(attack);
-			cooldown = ATTACK_DELAY_FRAMES;
+			setCooldown();
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean attackWithNoCooldown(LivingBeing enemy) {
-		if (cooldown == 0) {
+	public boolean attackWithNoCooldown(Killable enemy) {
+		if (isReady()) {
 			enemy.looseHealth(attack);
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean isReady() {
+		return cooldown == 0;
+	}
+	
+	public boolean isOnCooldown() {
+		return cooldown > 0;
 	}
 	
 	public void setCooldown() {
@@ -100,12 +117,11 @@ public class Unit extends LivingBeing {
 			cooldown--;
 		}
 	}
-
-	public void setSprite(SpriteUnit sprite) {
-		this.sprite = sprite;
-	}
 	
 	public SpriteUnit getSprite() {
+		if (sprite == null) {
+			sprite = new SpriteUnit(playerIndex, this);
+		}
 		return sprite;
 	}
 	

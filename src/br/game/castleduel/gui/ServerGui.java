@@ -18,11 +18,7 @@ public class ServerGui implements GuiInterface {
 	@Override
 	public void updateGame(int framesLeft) {
 	}
-
-	@Override
-	public void addSprite(int player, Unit unit) {
-	}
-
+	
 	@Override
 	public void addSprite(Sprite sprite) {
 	}

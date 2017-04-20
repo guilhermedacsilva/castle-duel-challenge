@@ -2,18 +2,20 @@ package br.game.castleduel;
 
 import br.game.castleduel.exception.PlayerException;
 import br.game.castleduel.gui.GuiInterface;
-import br.game.castleduel.gui.WindowGui;
 import br.game.castleduel.gui.ServerGui;
+import br.game.castleduel.gui.WindowGui;
 import br.game.castleduel.player.PlayerFacade;
 import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.time.FixedTimeRunnable;
 import br.game.castleduel.time.GameTime;
+import br.game.castleduel.unit.Unit;
 
 public class Game implements FixedTimeRunnable {
 	protected GameTime time;
 	protected Battleground battleground;
 	protected PlayerFacade players;
 	protected GuiInterface gui;
+	protected Bank bank;
 	protected int playerWonNumber = -1;
 
 	public void play(boolean isServer, int fps) {
@@ -35,6 +37,7 @@ public class Game implements FixedTimeRunnable {
 		time = new GameTime(fps);
 		gui = isServer ? new ServerGui() : new WindowGui();
 		battleground = new Battleground(gui);
+		bank = new Bank();
 	}
 	
 	protected void runGameLoop(boolean isServer) {
@@ -42,7 +45,7 @@ public class Game implements FixedTimeRunnable {
 			if (isServer) {
 				runGameLoopServer();
 			} else {
-				runGameLoopNormal();
+				runGameLoopWindow();
 			}
 		}
 	}
@@ -54,7 +57,7 @@ public class Game implements FixedTimeRunnable {
 		}
 	}
 
-	protected void runGameLoopNormal() {
+	protected void runGameLoopWindow() {
 		while (!battleground.isFinished() && time.canContinue()) {
 			time.runWithSleep(this);
 		}
@@ -71,16 +74,22 @@ public class Game implements FixedTimeRunnable {
 			runPlayers();
 		}
 		if (time.canReceiveGold()) {
-			battleground.gainGold();
+			bank.increaseGold();
 		}
 		battleground.executeBattle();
+		gui.setGold(bank.get(0), bank.get(1));
 	}
 	
 	protected void runPlayers() {
-		for (int i = 0; i < 2; i++) {
-			final PlayerInfo info = battleground.getPlayerInfo(i);
+		for (int playerIndex = 0; playerIndex < 2; playerIndex++) {
+			final PlayerInfo info = battleground.getPlayerInfo(playerIndex);
+			info.gold = bank.get(playerIndex);
 			final int unitIndex = players.callPlay(info);
-			battleground.addUnitFromPlayer(unitIndex, i);	
+			final Unit unit = bank.buyUnit(playerIndex, unitIndex);
+			if (unit != null) {
+				battleground.addUnit(unit);
+				gui.addSprite(unit.getSprite());	
+			}
 		}
 	}
 

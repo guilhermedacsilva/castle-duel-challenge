@@ -2,10 +2,12 @@ package br.game.castleduel.gui.sprite;
 
 import java.awt.Graphics;
 
+import br.game.castleduel.util.UniqueId;
+
 /**
  * Constants about the images.
  */
-abstract public class Sprite {
+abstract public class Sprite extends UniqueId {
 	protected static final int X1 = 0;
 	protected static final int Y1 = 1;
 	protected static final int X2 = 2;
@@ -15,7 +17,7 @@ abstract public class Sprite {
 	protected static final int POS_Y = 6;
 	
 	protected static final int[][] TYPE_DATA = new int[][]{
-		// image x1, y1, x2, y2, width, height, groundY
+		// image x1, y1, x2, y2, width, height, posY
 		// 0
 		{0, 0, 19, 32, (int)(19*1.5), (int)(32*1.5), 153},
 		// 1

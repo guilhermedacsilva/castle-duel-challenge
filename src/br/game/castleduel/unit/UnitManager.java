@@ -23,15 +23,21 @@ public class UnitManager {
 		new Unit(5, 17, 100, 4),
 	};
 	
+	public static Unit createUnit(int unitIndex, int playerIndex) {
+		Unit unit = new Unit(UNIT_ARRAY[unitIndex]);
+		unit.setPlayerIndex(playerIndex);
+		return unit;
+	}
+	
+	public static boolean canBuyUnit(int index, int gold) {
+		return isValidIndex(index) && gold >= getCost(index);
+	}
+	
 	public static int getCost(int index) {
 		return UNIT_ARRAY[index].gold;
 	}
 	
-	public static Unit createUnit(int index) {
-		return new Unit(UNIT_ARRAY[index]);
-	}
-	
-	public static boolean isValidIndex(int index) {
+	protected static boolean isValidIndex(int index) {
 		return index >= 0 && index < UNIT_ARRAY.length;
 	}
 }

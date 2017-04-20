@@ -8,7 +8,6 @@ import br.game.castleduel.util.ImageLoader;
 
 public class SpriteExplosion extends Sprite {
 	private static final BufferedImage EXPLOSION_IMAGE = ImageLoader.load("explosion.png");
-	// the duration (frames) of each state
 	private static final int STATE_DURATION_FRAMES = 2;
 	private static final int LAST_STATE = 15;
 	private static final int STATE_WIDTH_HEIGHT_ORIGINAL = 128;
@@ -21,12 +20,9 @@ public class SpriteExplosion extends Sprite {
 	private int offsetY;
 	
 	public SpriteExplosion(Sprite target) {
+		this.target = target;
 		offsetX = RANDOM.nextInt(target.getWidth()) - target.getCenterX();
-		offsetX = RANDOM.nextInt(target.getHeight()) - target.getCenterY();
-	}
-	
-	public static SpriteExplosion createFromPlayer(int player) {
-		return new SpriteExplosion(SpriteCastle.getSprite(castle.getPlayer()));
+		offsetY = RANDOM.nextInt(target.getHeight()) - target.getCenterY();
 	}
 
 	@Override
@@ -37,7 +33,7 @@ public class SpriteExplosion extends Sprite {
 		if (shouldDelete()) {
 			return;
 		}
-		drawExplosion(g);
+		paintExplosion(g);
 	}
 
 	@Override
@@ -45,7 +41,7 @@ public class SpriteExplosion extends Sprite {
 		return currentState > LAST_STATE;
 	}
 	
-	private void drawExplosion(Graphics g) {
+	private void paintExplosion(Graphics g) {
 		final int x1 = currentState % 4;
 		final int y1 = currentState / 4;
 		

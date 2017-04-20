@@ -1,6 +1,6 @@
 package br.game.castleduel.unit;
 
-public abstract class LivingBeing {
+public abstract class Killable {
 	protected int healthMax;
 	protected int health;
 	
