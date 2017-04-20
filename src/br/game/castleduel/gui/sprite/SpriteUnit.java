@@ -1,4 +1,4 @@
-package br.game.castleduel.gui;
+package br.game.castleduel.gui.sprite;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,9 +6,14 @@ import java.awt.image.BufferedImage;
 
 import br.game.castleduel.Battleground;
 import br.game.castleduel.unit.Unit;
+import br.game.castleduel.util.ImageLoader;
 import br.game.castleduel.util.ImageUtil;
 
-public class SpriteUnit extends SpriteAbstract {
+public class SpriteUnit extends Sprite {
+	private static final int UNIT_WIDTH = 17;
+	private static final int UNIT_HEIGHT = 23;
+	private static final int UNIT_CENTER_X = 8;
+	private static final int UNIT_CENTER_Y = 11;
 	private static int ID_GENERATOR = 0;
 	private static int[] POS_Y_OFFSET = new int[] {0,0}; //p1, p2
 	private final int id;
@@ -80,6 +85,26 @@ public class SpriteUnit extends SpriteAbstract {
 	@Override
 	public int getPositionY() {
 		return posY;
+	}
+	
+	@Override
+	public int getWidth() {
+		return UNIT_WIDTH;
+	}
+	
+	@Override
+	public int getHeight() {
+		return UNIT_HEIGHT;
+	}
+	
+	@Override
+	public int getCenterX() {
+		return UNIT_CENTER_X;
+	}
+	
+	@Override
+	public int getCenterY() {
+		return UNIT_CENTER_Y;
 	}
 	
 	protected static BufferedImage loadImage(int player, Unit unit) {

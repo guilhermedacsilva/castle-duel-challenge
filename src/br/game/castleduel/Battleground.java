@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.game.castleduel.gui.GuiInterface;
-import br.game.castleduel.gui.SpriteExplosion;
+import br.game.castleduel.gui.sprite.SpriteCastle;
+import br.game.castleduel.gui.sprite.SpriteExplosion;
 import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
@@ -144,7 +145,7 @@ public class Battleground {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
 				hit = unit.attackWithCooldown(enemy);
 				if (hit) {
-					gui.addSpriteAbstract(new SpriteExplosion(enemy));
+					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
 				}
 				return true;
 			}
@@ -163,7 +164,7 @@ public class Battleground {
 				enemyInRange = true;
 				if (unit.attackWithNoCooldown(enemy)) {
 					hit = true;
-					gui.addSpriteAbstract(new SpriteExplosion(enemy));
+					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
 				}
 			}
 		}
@@ -191,7 +192,7 @@ public class Battleground {
 		int distance = CASTLE_POSITION - unit.getPosition();
 		if (distance <= unit.getRange()) {
 			if (unit.attackWithCooldown(castle)) {
-				gui.addSpriteAbstract(new SpriteExplosion(castle));
+				gui.addSprite();
 			}
 			return true;
 		}

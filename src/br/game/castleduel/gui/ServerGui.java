@@ -1,5 +1,6 @@
 package br.game.castleduel.gui;
 
+import br.game.castleduel.gui.sprite.Sprite;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -23,7 +24,7 @@ public class ServerGui implements GuiInterface {
 	}
 
 	@Override
-	public void addSpriteAbstract(SpriteAbstract sprite) {
+	public void addSprite(Sprite sprite) {
 	}
 	
 	@Override

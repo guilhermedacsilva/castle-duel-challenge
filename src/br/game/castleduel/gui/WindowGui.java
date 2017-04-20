@@ -14,10 +14,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import br.game.castleduel.Battleground;
+import br.game.castleduel.gui.sprite.Sprite;
+import br.game.castleduel.gui.sprite.SpriteUnit;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
+import br.game.castleduel.util.ImageLoader;
 
-public class NormalGui extends JPanel implements GuiInterface {
+public class WindowGui extends JPanel implements GuiInterface {
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT_GAME = 255;
 	public static final int CASTLE_POS_X = 20;
@@ -27,16 +30,16 @@ public class NormalGui extends JPanel implements GuiInterface {
 	protected BufferedImage castle = ImageLoader.load("castle.png");
 	protected BufferedImage grass = ImageLoader.load("grass.jpg");
 	protected BufferedImage sky = ImageLoader.load("sky.jpg");
-	private List<SpriteAbstract> deadSprites;
+	private List<Sprite> deadSprites;
 
-	protected LinkedBlockingQueue<SpriteAbstract> sprites;
+	protected LinkedBlockingQueue<Sprite> sprites;
 	protected Castle castleP1;
 	protected Castle castleP2;
 	protected int playerWon = -1;
 	protected int[] gold = new int[2];
 	protected int framesLeft;
 	
-	public NormalGui() {}
+	public WindowGui() {}
 	
 	public void init(
 			int width,
@@ -81,7 +84,7 @@ public class NormalGui extends JPanel implements GuiInterface {
 		sprites.add(new SpriteUnit(player, unit));
 	}
 	
-	public void addSpriteAbstract(SpriteAbstract sprite) {
+	public void addSprite(Sprite sprite) {
 		sprites.add(sprite);
 	}
 
@@ -128,13 +131,13 @@ public class NormalGui extends JPanel implements GuiInterface {
 	
 	protected void drawUnits(Graphics g) {
 		deadSprites.clear();
-		for (SpriteAbstract sprite : sprites) {
+		for (Sprite sprite : sprites) {
 			sprite.paint(g);
 			if (sprite.shouldDelete()) {
 				deadSprites.add(sprite);
 			}
 		}
-		for (SpriteAbstract sprite : deadSprites) {
+		for (Sprite sprite : deadSprites) {
 			sprites.remove(sprite);
 		}
 	}
@@ -167,7 +170,7 @@ public class NormalGui extends JPanel implements GuiInterface {
 		}
 		
 		String printString = "PLAYER " + playerWon + " WON!";
-		if (playerWon == 3) {
+		if (playerWon == 0) {
 			printString = "DRAW!";
 		}
 		g.setFont(new Font(Font.SERIF, Font.BOLD, 90));

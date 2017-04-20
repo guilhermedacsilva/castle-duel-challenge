@@ -1,10 +1,13 @@
-package br.game.castleduel.gui;
+package br.game.castleduel.gui.sprite;
 
 import java.awt.Graphics;
 
 import br.game.castleduel.Battleground;
+import br.game.castleduel.gui.WindowGui;
 
-public class SpriteCastle extends SpriteAbstract {
+public class SpriteCastle extends Sprite {
+	private static final int CASTLE_WIDTH = 111;
+	private static final int CASTLE_HEIGHT = 126;
 	private static SpriteCastle CASTLE1 = new SpriteCastle(1);
 	private static SpriteCastle CASTLE2 = new SpriteCastle(2);
 	private int positionX;
@@ -19,11 +22,11 @@ public class SpriteCastle extends SpriteAbstract {
 	
 	private SpriteCastle(int player) {
 		if (player == 1) {
-			positionX = NormalGui.CASTLE_POS_X;
+			positionX = WindowGui.CASTLE_POS_X;
 		} else {
-			positionX = Battleground.BATTLEGROUND_WIDTH - NormalGui.CASTLE_POS_X - NormalGui.CASTLE_HEALTH_WIDTH;
+			positionX = Battleground.BATTLEGROUND_WIDTH - WindowGui.CASTLE_POS_X - WindowGui.CASTLE_HEALTH_WIDTH;
 		}
-		positionY = NormalGui.CASTLE_POS_Y;
+		positionY = WindowGui.CASTLE_POS_Y;
 	}
 
 	@Override
@@ -43,5 +46,15 @@ public class SpriteCastle extends SpriteAbstract {
 	@Override
 	public int getPositionY() {
 		return positionY;
+	}
+	
+	@Override
+	public int getWidth() {
+		return CASTLE_WIDTH;
+	}
+	
+	@Override
+	public int getHeight() {
+		return CASTLE_HEIGHT;
 	}
 }

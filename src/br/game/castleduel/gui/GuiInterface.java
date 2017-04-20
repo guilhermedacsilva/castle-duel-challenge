@@ -1,5 +1,6 @@
 package br.game.castleduel.gui;
 
+import br.game.castleduel.gui.sprite.Sprite;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
 
@@ -18,7 +19,7 @@ public interface GuiInterface {
 	
 	public void addSprite(int player, Unit unit);
 	
-	public void addSpriteAbstract(SpriteAbstract sprite);
+	public void addSprite(Sprite sprite);
 
 	public void setGold(int gold, int gold2);
 }

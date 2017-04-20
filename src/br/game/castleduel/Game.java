@@ -2,7 +2,7 @@ package br.game.castleduel;
 
 import br.game.castleduel.exception.PlayerException;
 import br.game.castleduel.gui.GuiInterface;
-import br.game.castleduel.gui.NormalGui;
+import br.game.castleduel.gui.WindowGui;
 import br.game.castleduel.gui.ServerGui;
 import br.game.castleduel.player.PlayerFacade;
 import br.game.castleduel.player.PlayerInfo;
@@ -33,7 +33,7 @@ public class Game implements FixedTimeRunnable {
 	
 	protected void loadGameLogic(boolean isServer, int fps) {
 		time = new GameTime(fps);
-		gui = isServer ? new ServerGui() : new NormalGui();
+		gui = isServer ? new ServerGui() : new WindowGui();
 		battleground = new Battleground(gui);
 	}
 	
@@ -47,14 +47,14 @@ public class Game implements FixedTimeRunnable {
 		}
 	}
 	
-	private void runGameLoopServer() {
+	protected void runGameLoopServer() {
 		while (!battleground.isFinished() && time.canContinue()) {
 			runBattle();
 			time.nextFrame();
 		}
 	}
 
-	private void runGameLoopNormal() {
+	protected void runGameLoopNormal() {
 		while (!battleground.isFinished() && time.canContinue()) {
 			time.runWithSleep(this);
 		}
@@ -66,7 +66,7 @@ public class Game implements FixedTimeRunnable {
 		gui.updateGame(time.getFramesLeft());
 	}
 
-	private void runBattle() {
+	protected void runBattle() {
 		if (time.canPlayersPlay()) {
 			runPlayers();
 		}
@@ -76,7 +76,7 @@ public class Game implements FixedTimeRunnable {
 		battleground.executeBattle();
 	}
 	
-	private void runPlayers() {
+	protected void runPlayers() {
 		for (int i = 0; i < 2; i++) {
 			final PlayerInfo info = battleground.getPlayerInfo(i);
 			final int unitIndex = players.callPlay(info);
@@ -84,7 +84,13 @@ public class Game implements FixedTimeRunnable {
 		}
 	}
 
-	private void finish() {
+	protected void finish() {
+		setPlayerWonNumber();
+		gui.setPlayerWon(playerWonNumber);
+		gui.updateGame(0);
+	}
+	
+	protected int setPlayerWonNumber() {
 		if (playerWonNumber == -1) {
 			PlayerInfo player0 = battleground.getPlayerInfo(0);			
 			if (player0.castle > player0.castleEnemy) {
@@ -92,11 +98,10 @@ public class Game implements FixedTimeRunnable {
 			} else if (player0.castle < player0.castleEnemy) {
 				playerWonNumber = 2;
 			} else {
-				playerWonNumber = 3;
+				playerWonNumber = 0;
 			}
 		}
-		gui.setPlayerWon(playerWonNumber);
-		gui.updateGame(0);
+		return playerWonNumber;
 	}
 
 }

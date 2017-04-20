@@ -1,11 +1,11 @@
-package br.game.castleduel.gui;
+package br.game.castleduel.gui.sprite;
 
 import java.awt.Graphics;
 
 /**
  * Constants about the images.
  */
-abstract public class SpriteAbstract {
+abstract public class Sprite {
 	protected static final int X1 = 0;
 	protected static final int Y1 = 1;
 	protected static final int X2 = 2;
@@ -30,12 +30,34 @@ abstract public class SpriteAbstract {
 		{0, 0, 80, 138, (int)(80*0.85), (int)(138*0.85), 90},
 	};
 	
-	public abstract boolean shouldDelete();
+	public boolean shouldDelete() {
+		return false;
+	}
 	
-	public abstract void paint(Graphics g);
+	public void paint(Graphics g) {
+	}
 	
-	public abstract int getPositionX();
+	public int getPositionX() {
+		return 0;
+	}
+
+	public int getPositionY() {
+		return 0;
+	}
+
+	public int getWidth() {
+		return 0;
+	}
 	
-	public abstract int getPositionY();
+	public int getHeight() {
+		return 0;
+	}
 	
+	public int getCenterX() {
+		return 0;
+	}
+	
+	public int getCenterY() {
+		return 0;
+	}
 }

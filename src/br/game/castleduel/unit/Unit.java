@@ -1,6 +1,6 @@
 package br.game.castleduel.unit;
 
-import br.game.castleduel.gui.SpriteUnit;
+import br.game.castleduel.gui.sprite.SpriteUnit;
 
 public class Unit extends LivingBeing {
 	public static final int RANGE_CLOSE = 100;
