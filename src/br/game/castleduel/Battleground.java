@@ -107,11 +107,7 @@ public class Battleground {
 		}
 	}
 
-	protected void tryAttackEnemy(
-			Unit unit, 
-			List<Unit> enemies
-			) {
-		
+	protected void tryAttackEnemy(Unit unit, List<Unit> enemies) {
 		if (unit.isReady()) {
 			if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
 				tryAttackNormalHit(unit, enemies);
@@ -121,32 +117,25 @@ public class Battleground {
 		}
 	}
 	
-	protected boolean tryAttackNormalHit(
-			Unit unit, 
-			List<Unit> enemies
-			) {
-		boolean hit = false;
+	protected void tryAttackNormalHit(Unit unit, List<Unit> enemies) {
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				hit = unit.attackWithCooldown(enemy);
+				boolean hit = unit.attackWithCooldown(enemy);
 				if (hit) {
 					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
 				}
-				return true;
+				return;
 			}
 		}
-		return false;
 	}
 	
-	protected boolean tryAttackHitAll(
+	protected void tryAttackHitAll(
 			Unit unit, 
 			List<Unit> enemies
 			) {
-		boolean enemyInRange = false;
 		boolean hit = false;
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				enemyInRange = true;
 				if (unit.attackWithNoCooldown(enemy)) {
 					hit = true;
 					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
@@ -156,10 +145,9 @@ public class Battleground {
 		if (hit) {
 			unit.setCooldown();
 		}
-		return enemyInRange;
 	}
 	
-	protected static boolean isInAttackRange(Unit unit, Unit enemy) {
+	protected boolean isInAttackRange(Unit unit, Unit enemy) {
 		int distance = BATTLEGROUND_WIDTH 
 				- unit.getPosition() 
 				- enemy.getPosition();
@@ -167,17 +155,13 @@ public class Battleground {
 		return distance <= unit.getRange();
 	}
 	
-	protected boolean tryAttackCastle(
-			Unit unit, 
-			Castle castle
-			) {
-		if (isInCastleRange(unit)) {
-			if (unit.attackWithCooldown(castle)) {
-				gui.addSprite(createCastleExplosionSprite(castle));
-			}
-			return true;
+	protected void tryAttackCastle(Unit unit, Castle castle) {
+		if (unit.isReady() 
+				&& isInCastleRange(unit)
+				&& unit.attackWithCooldown(castle)) {
+			
+			gui.addSprite(createCastleExplosionSprite(castle));
 		}
-		return false;
 	}
 	
 	protected boolean isInCastleRange(Unit unit) {
