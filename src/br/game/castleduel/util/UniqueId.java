@@ -2,7 +2,7 @@ package br.game.castleduel.util;
 
 public abstract class UniqueId {
 	private static int ID_GENERATOR = 0;
-	protected final int id;
+	private final int id;
 	
 	public UniqueId() {
 		id = ID_GENERATOR++;

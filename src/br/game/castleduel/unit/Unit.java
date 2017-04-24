@@ -3,13 +3,8 @@ package br.game.castleduel.unit;
 import br.game.castleduel.gui.sprite.SpriteUnit;
 
 public class Unit extends Killable {
-	public static final int RANGE_CLOSE = 100;
-	private static int ID_GENERATOR = 0;
-	private static long ATTACK_DELAY_FRAMES = 60; 
-	public static final int ATTACK_TYPE_NORMAL = 0;
-	public static final int ATTACK_TYPE_HIT_ALL = 1;
+	private static long ATTACK_DELAY_FRAMES = 60;
 
-	public final int id;
 	protected int type;
 	protected int attack;
 	protected int attackType;
@@ -17,16 +12,8 @@ public class Unit extends Killable {
 	protected int gold;
 	protected int position = 0;
 	protected long cooldown = 0;
-	private int playerIndex;
-	private SpriteUnit sprite;
-
-	protected Unit(int type, int gold, int health, int attack) {
-		this(type, gold, health, attack, RANGE_CLOSE);
-	}
-	
-	protected Unit(int type, int gold, int health, int attack, int range) {
-		this(type, gold, health, attack, range, ATTACK_TYPE_NORMAL);
-	}
+	protected int playerIndex;
+	protected SpriteUnit sprite;
 	
 	protected Unit(int type, int gold, int health, 
 			int attack, int range, int attackType) {
@@ -37,7 +24,6 @@ public class Unit extends Killable {
 		this.attack = attack;
 		this.attackType = attackType;
 		this.range = range;
-		id = ID_GENERATOR++;
 	}
 
 	protected Unit(Unit unit) {
@@ -48,7 +34,6 @@ public class Unit extends Killable {
 		this.attackType = unit.attackType;
 		this.gold = unit.gold;
 		this.range = unit.range;
-		id = ID_GENERATOR++;
 	}
 	
 	public int getAttack() {
@@ -83,21 +68,17 @@ public class Unit extends Killable {
 		return playerIndex;
 	}
 
-	public boolean attackWithCooldown(Killable enemy) {
+	public void attackWithCooldown(Killable enemy) {
 		if (isReady()) {
 			enemy.looseHealth(attack);
 			setCooldown();
-			return true;
 		}
-		return false;
 	}
 	
-	public boolean attackWithNoCooldown(Killable enemy) {
+	public void attackWithNoCooldown(Killable enemy) {
 		if (isReady()) {
 			enemy.looseHealth(attack);
-			return true;
 		}
-		return false;
 	}
 	
 	public boolean isReady() {
@@ -124,25 +105,4 @@ public class Unit extends Killable {
 		}
 		return sprite;
 	}
-	
-	@Override
-	public int hashCode() {
-		return id;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Unit other = (Unit) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
-	
-	
 }

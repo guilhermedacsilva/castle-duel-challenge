@@ -10,15 +10,11 @@ public class Player2 {
 			int castleEnemy
 			) {
 		
-		if (action == 0 && gold >= 30) {
+		if (action == 0 && gold >= 20) {
 			action = 1;
 		}
 		if (action == 1) {
-			action = 2;
-			return 4;
-		}
-		if (action == 2) {
-			return 4;
+			return 0;
 		}
 		return -1;
 	}

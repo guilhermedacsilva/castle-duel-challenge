@@ -1,10 +1,12 @@
 package br.game.castleduel.unit;
 
+import static br.game.castleduel.unit.UnitConsts.*;
+
 public class UnitManager {
 	private static Unit[] UNIT_ARRAY = new Unit[] {
 		// 0 melee
 		// 000x11 0000x111 00x2 000x4
-		new Unit(0, 3, 10, 3), 
+		new Unit(SKELETON_TYPE, 3, 10, 3), 
 		// 1 ranged
 		// 11x00 111x000 111x4
 		new Unit(1, 4, 7, 2, 220),

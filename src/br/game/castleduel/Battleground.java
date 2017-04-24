@@ -102,12 +102,12 @@ public class Battleground {
 	protected void attackUnitsFrom(int playerIndex) {
 		final int enemyIndex = getEnemyIndex(playerIndex);
 		for (Unit attackingUnit : units.get(playerIndex)) {
-			tryAttackEnemy(attackingUnit, units.get(enemyIndex));
+			tryAttackEnemies(attackingUnit, units.get(enemyIndex));
 			tryAttackCastle(attackingUnit, castles[enemyIndex]);
 		}
 	}
 
-	protected void tryAttackEnemy(Unit unit, List<Unit> enemies) {
+	protected void tryAttackEnemies(Unit unit, List<Unit> enemies) {
 		if (unit.isReady()) {
 			if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
 				tryAttackNormalHit(unit, enemies);
@@ -118,12 +118,13 @@ public class Battleground {
 	}
 	
 	protected void tryAttackNormalHit(Unit unit, List<Unit> enemies) {
+		if (unit.isOnCooldown()) {
+			return;
+		}
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				boolean hit = unit.attackWithCooldown(enemy);
-				if (hit) {
-					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
-				}
+				unit.attackWithCooldown(enemy);
+				gui.addSprite(new SpriteExplosion(enemy.getSprite()));
 				return;
 			}
 		}
@@ -133,13 +134,15 @@ public class Battleground {
 			Unit unit, 
 			List<Unit> enemies
 			) {
+		if (unit.isOnCooldown()) {
+			return;
+		}
 		boolean hit = false;
 		for (Unit enemy : enemies) {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
-				if (unit.attackWithNoCooldown(enemy)) {
-					hit = true;
-					gui.addSprite(new SpriteExplosion(enemy.getSprite()));
-				}
+				hit = true;
+				unit.attackWithNoCooldown(enemy);
+				gui.addSprite(new SpriteExplosion(enemy.getSprite()));
 			}
 		}
 		if (hit) {
@@ -156,10 +159,8 @@ public class Battleground {
 	}
 	
 	protected void tryAttackCastle(Unit unit, Castle castle) {
-		if (unit.isReady() 
-				&& isInCastleRange(unit)
-				&& unit.attackWithCooldown(castle)) {
-			
+		if (unit.isReady() && isInCastleRange(unit)) {
+			unit.attackWithCooldown(castle);
 			gui.addSprite(createCastleExplosionSprite(castle));
 		}
 	}

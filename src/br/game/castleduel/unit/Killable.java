@@ -1,6 +1,8 @@
 package br.game.castleduel.unit;
 
-public abstract class Killable {
+import br.game.castleduel.util.UniqueId;
+
+public abstract class Killable extends UniqueId {
 	protected int healthMax;
 	protected int health;
 	
