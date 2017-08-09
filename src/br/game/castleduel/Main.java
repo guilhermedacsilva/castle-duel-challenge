@@ -1,5 +1,7 @@
 package br.game.castleduel;
 
+import br.game.castleduel.player.PlayerFilesPreparator;
+
 public class Main {
 	protected static final String CONFIG_FPS = "fps";
 	protected static final String CONFIG_SERVER = "server";
@@ -34,7 +36,16 @@ public class Main {
 	}
 
 	protected void execute() {
-		Game game = new Game();
-		game.play(isServer, fps);
+		if (isServer) {
+			while (PlayerFilesPreparator.prepare()) {
+				Game game = new Game();
+				game.play(isServer, fps);				
+			}
+			
+		} else {
+			PlayerFilesPreparator.prepare();
+			Game game = new Game();
+			game.play(isServer, fps);	
+		}
 	}
 }

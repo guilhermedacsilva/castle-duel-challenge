@@ -8,19 +8,21 @@ public class PlayerFacade {
 	protected static final String PLAY_ERROR_MSG = 
 			"Error invoking play method from player %d";
 	protected Object[] playerObjects = new Object[2];
-	protected Method[] playerMethods = new Method[2];
+	protected Method[] playMethods = new Method[2];
+	protected Method[] getNameMethods = new Method[2];
 	
 	public PlayerFacade() throws PlayerException {
-		PlayerCompiler.compileFiles();
+		String[] filenames = PlayerCompiler.compileFiles();
 		for (int index = 0; index < 2; index++) {
-			playerObjects[index] = PlayerLoader.load(index+1);
-			playerMethods[index] = getPlayMethod(index+1);	
+			playerObjects[index] = PlayerLoader.load(index, filenames[index]);
+			playMethods[index] = getPlayMethod(index+1);	
+			getNameMethods[index] = getNameMethod(index+1);	
 		}
 	}
 
 	public int callPlay(PlayerInfo info) {
 		try {
-			return (int) playerMethods[info.playerIndex].invoke(
+			return (int) playMethods[info.playerIndex].invoke(
 				playerObjects[info.playerIndex], 
 				info.gold,
 				info.units, 
@@ -36,9 +38,15 @@ public class PlayerFacade {
 		return -1;
 	}
 	
-	protected Method getPlayMethod(int playerNumber) 
-			throws PlayerException {
-		
+	public String callGetName(int playerIndex) throws PlayerException {
+		try {
+			return (String) getNameMethods[playerIndex].invoke(playerObjects[playerIndex]);
+		} catch (Exception e) {
+			throw new PlayerException(playerIndex+1);
+		}
+	}
+	
+	protected Method getPlayMethod(int playerNumber) throws PlayerException {
 		try {
 			return playerObjects[playerNumber-1].getClass().getMethod(
 				"play", 
@@ -48,6 +56,14 @@ public class PlayerFacade {
 				int.class, 
 				int.class
 			);
+		} catch (Exception e) {
+			throw new PlayerException(playerNumber);
+		}
+	}
+	
+	protected Method getNameMethod(int playerNumber) throws PlayerException {
+		try {
+			return playerObjects[playerNumber-1].getClass().getMethod("getName");
 		} catch (Exception e) {
 			throw new PlayerException(playerNumber);
 		}

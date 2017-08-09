@@ -32,11 +32,18 @@ public class WindowGui extends JPanel implements GuiInterface {
 	
 	protected List<Sprite> deadSprites = new ArrayList<>(20);
 	protected LinkedBlockingQueue<Sprite> sprites = new LinkedBlockingQueue<>();
+	protected String playerName1;
+	protected String playerName2;
 	protected Castle castleP1;
 	protected Castle castleP2;
 	protected int playerWon = -1;
 	protected int[] gold = new int[2];
 	protected int framesLeft;
+	
+	public WindowGui(String playerName1, String playerName2) {
+		this.playerName1 = playerName1;
+		this.playerName2 = playerName2;
+	}
 	
 	public void init(
 			int width,
@@ -86,6 +93,7 @@ public class WindowGui extends JPanel implements GuiInterface {
 		drawGrass(g);
 		drawCastleHealth(g);
 		drawCastles(g);
+		drawNames(g);
 		drawGold(g);
 		drawTime(g);
 	}
@@ -99,6 +107,15 @@ public class WindowGui extends JPanel implements GuiInterface {
 	private void drawCastles(final Graphics g) {
 		g.drawImage(castle, 0, 0, null);
 		g.drawImage(castle, getWidth() - castle.getWidth(), 0, null);
+	}
+	
+	private void drawNames(final Graphics g) {
+		g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
+		drawOutline(g, playerName1, 110-(playerName1.length()*10), 50, 1);
+		drawOutline(g, playerName2, 695-(playerName2.length()*10), 50, 1);
+		g.setColor(Color.WHITE);
+		g.drawString(playerName1, 110-(playerName1.length()*10), 50);
+		g.drawString(playerName2, 695-(playerName2.length()*10), 50);
 	}
 
 	private void drawGold(final Graphics g) {

@@ -45,4 +45,8 @@ public class Player1 {
 		}
 		return WAIT;
 	}
+	
+	public String getName() {
+		return "João";
+	}
 }

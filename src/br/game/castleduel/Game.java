@@ -18,11 +18,12 @@ public class Game implements FixedTimeRunnable {
 	protected Bank bank;
 	protected int playerWonNumber = -1;
 
-	public void play(boolean isServer, int fps) {
+	public int play(boolean isServer, int fps) {
 		loadPlayers();
 		loadGameLogic(isServer, fps);
 		runGameLoop(isServer);
 		finish();
+		return playerWonNumber;
 	}
 	
 	protected void loadPlayers() {
@@ -35,7 +36,12 @@ public class Game implements FixedTimeRunnable {
 	
 	protected void loadGameLogic(boolean isServer, int fps) {
 		time = new GameTime(fps);
-		gui = isServer ? new ServerGui() : new WindowGui();
+		try {
+			gui = isServer ? new ServerGui() : new WindowGui(players.callGetName(0), players.callGetName(1));
+		} catch (PlayerException e) {
+			gui = new WindowGui("", "");
+			playerWonNumber = e.player != 1 ? 1 : 2;
+		}
 		battleground = new Battleground(gui);
 		bank = new Bank();
 	}
@@ -99,7 +105,7 @@ public class Game implements FixedTimeRunnable {
 		gui.updateGame(0);
 	}
 	
-	protected int setPlayerWonNumber() {
+	protected void setPlayerWonNumber() {
 		if (playerWonNumber == -1) {
 			PlayerInfo player0 = battleground.getPlayerInfo(0);			
 			if (player0.castle > player0.castleEnemy) {
@@ -110,7 +116,6 @@ public class Game implements FixedTimeRunnable {
 				playerWonNumber = 0;
 			}
 		}
-		return playerWonNumber;
 	}
 
 }

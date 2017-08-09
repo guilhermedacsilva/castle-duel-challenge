@@ -11,6 +11,7 @@ import br.game.castleduel.gui.sprite.SpriteExplosion;
 import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
+import br.game.castleduel.unit.UnitConsts;
 import br.game.castleduel.util.Matrix;
 
 public class Battleground {
@@ -109,7 +110,7 @@ public class Battleground {
 
 	protected void tryAttackEnemies(Unit unit, List<Unit> enemies) {
 		if (unit.isReady()) {
-			if (Unit.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
+			if (UnitConsts.ATTACK_TYPE_NORMAL == unit.getAttackType()) {
 				tryAttackNormalHit(unit, enemies);
 			} else {
 				tryAttackHitAll(unit, enemies);
