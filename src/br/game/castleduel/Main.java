@@ -37,15 +37,22 @@ public class Main {
 
 	protected void execute() {
 		if (isServer) {
+			Score score = new Score();
+			
 			while (PlayerFilesPreparator.prepare()) {
+				score.init(PlayerFilesPreparator.getRealNames());
 				Game game = new Game();
-				game.play(isServer, fps);				
+				String playerWonTmpName = game.play(isServer, fps);
+				String playerWonRealName = PlayerFilesPreparator.getPlayerRealName(playerWonTmpName);
+				score.increment(playerWonRealName);
 			}
+			score.print();
+			score.saveToFile();
 			
 		} else {
 			PlayerFilesPreparator.prepare();
 			Game game = new Game();
-			game.play(isServer, fps);	
+			game.play(isServer, fps);
 		}
 	}
 }

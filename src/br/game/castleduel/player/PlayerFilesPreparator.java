@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import br.game.castleduel.util.FileUtil;
 import br.game.castleduel.util.SourceCodeFileFilter;
 
 public class PlayerFilesPreparator {
 	private static final File FOLDER_PLAYERS = new File("players");
-	private static PlayerFilesPreparator SINGLETON;
+	private static final PlayerFilesPreparator SINGLETON = new PlayerFilesPreparator();
+	private static final Map<String, String> TMP_NAME_TO_REAL_NAME = new HashMap<>(); 
 	private static int uniqueId = 0;
 	private File[] sourceCodes;
 	private int playerIndex1;
@@ -24,14 +28,11 @@ public class PlayerFilesPreparator {
 	}
 	
 	public static boolean prepare() {
-		if (SINGLETON == null) {
-			SINGLETON = new PlayerFilesPreparator();
-		}
 		try {
 			return SINGLETON.run();	
 		} catch (IOException e) {
-			System.out.println("Java source could not be read.");
-			System.exit(1);
+			e.printStackTrace();
+			FileUtil.write("error.log", e.getMessage());
 		}
 		return false;
 	}
@@ -41,8 +42,8 @@ public class PlayerFilesPreparator {
 			return false;
 		}
 		FileUtil.cleanDir(new File("tmp"));
-		createTempJavaFile(sourceCodes[playerIndex1]);
-		createTempJavaFile(sourceCodes[playerIndex2]);
+		createTempJavaFile(playerIndex1, sourceCodes[playerIndex1]);
+		createTempJavaFile(playerIndex2, sourceCodes[playerIndex2]);
 		return true;
 	}
 	
@@ -58,7 +59,7 @@ public class PlayerFilesPreparator {
 		return true;
 	}
 
-	private void createTempJavaFile(File sourceCode) throws IOException {
+	private void createTempJavaFile(int index, File sourceCode) throws IOException {
 		uniqueId++;
 		final String newClassname = "Player" + uniqueId;
 		final String newFilename = newClassname + ".java";
@@ -68,6 +69,16 @@ public class PlayerFilesPreparator {
 		String content = new String(byteContent, StandardCharsets.UTF_8);
 		content = content.replaceFirst("class.+\\{", "class " + newClassname + " {");
 		Files.write(newFilePath, content.getBytes());
+		
+		TMP_NAME_TO_REAL_NAME.put(newFilename, sourceCode.getName());
+	}
+	
+	public static Collection<String> getRealNames() {
+		return TMP_NAME_TO_REAL_NAME.values();
+	}
+
+	public static String getPlayerRealName(String player) {
+		return TMP_NAME_TO_REAL_NAME.get(player);
 	}
 	
 }

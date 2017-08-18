@@ -18,12 +18,15 @@ public class Game implements FixedTimeRunnable {
 	protected Bank bank;
 	protected int playerWonNumber = -1;
 
-	public int play(boolean isServer, int fps) {
+	public String play(boolean isServer, int fps) {
 		loadPlayers();
 		loadGameLogic(isServer, fps);
 		runGameLoop(isServer);
 		finish();
-		return playerWonNumber;
+		if (playerWonNumber == 0) {
+			return null;
+		}
+		return players.getFilename(playerWonNumber);
 	}
 	
 	protected void loadPlayers() {

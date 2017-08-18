@@ -5,19 +5,24 @@ import java.lang.reflect.Method;
 import br.game.castleduel.exception.PlayerException;
 
 public class PlayerFacade {
-	protected static final String PLAY_ERROR_MSG = 
+	private static final String PLAY_ERROR_MSG = 
 			"Error invoking play method from player %d";
-	protected Object[] playerObjects = new Object[2];
-	protected Method[] playMethods = new Method[2];
-	protected Method[] getNameMethods = new Method[2];
+	private Object[] playerObjects = new Object[2];
+	private Method[] playMethods = new Method[2];
+	private Method[] getNameMethods = new Method[2];
+	private String[] filenames;
 	
 	public PlayerFacade() throws PlayerException {
-		String[] filenames = PlayerCompiler.compileFiles();
+		filenames = PlayerCompiler.compileFiles();
 		for (int index = 0; index < 2; index++) {
 			playerObjects[index] = PlayerLoader.load(index, filenames[index]);
 			playMethods[index] = getPlayMethod(index+1);	
 			getNameMethods[index] = getNameMethod(index+1);	
 		}
+	}
+	
+	public String getFilename(int player) {
+		return filenames[player-1];
 	}
 
 	public int callPlay(PlayerInfo info) {
