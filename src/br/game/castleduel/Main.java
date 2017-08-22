@@ -1,5 +1,6 @@
 package br.game.castleduel;
 
+import br.game.castleduel.exception.PlayerException;
 import br.game.castleduel.player.PlayerFilesPreparator;
 
 public class Main {
@@ -39,11 +40,17 @@ public class Main {
 		if (isServer) {
 			Score score = new Score();
 			
+			String playerWonTmpName, playerWonRealName;
+			
 			while (PlayerFilesPreparator.prepare()) {
 				score.init(PlayerFilesPreparator.getRealNames());
 				Game game = new Game();
-				String playerWonTmpName = game.play(isServer, fps);
-				String playerWonRealName = PlayerFilesPreparator.getPlayerRealName(playerWonTmpName);
+				try {
+					playerWonTmpName = game.play(isServer, fps);
+					playerWonRealName = PlayerFilesPreparator.getPlayerRealName(playerWonTmpName);
+				} catch (PlayerException e) {
+					playerWonRealName = PlayerFilesPreparator.getOtherPlayerRealName(e.filename);
+				}
 				score.increment(playerWonRealName);
 			}
 			score.print();
@@ -52,7 +59,11 @@ public class Main {
 		} else {
 			PlayerFilesPreparator.prepare();
 			Game game = new Game();
-			game.play(isServer, fps);
+			try {
+				game.play(isServer, fps);
+			} catch (PlayerException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

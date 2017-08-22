@@ -18,33 +18,31 @@ public class Game implements FixedTimeRunnable {
 	protected Bank bank;
 	protected int playerWonNumber = -1;
 
-	public String play(boolean isServer, int fps) {
-		loadPlayers();
-		loadGameLogic(isServer, fps);
-		runGameLoop(isServer);
-		finish();
+	public String play(boolean isServer, int fps) throws PlayerException {
+		try {
+			loadPlayers();
+			loadGameLogic(isServer, fps);
+			runGameLoop(isServer);
+			finish();
+		} catch (PlayerException e) {
+			if (players == null) {
+				throw e;
+			}
+			playerWonNumber = e.player != 1 ? 1 : 2;
+		}
 		if (playerWonNumber == 0) {
 			return null;
 		}
 		return players.getFilename(playerWonNumber);
 	}
 	
-	protected void loadPlayers() {
-		try {
-			players = new PlayerFacade();
-		} catch (PlayerException e) {
-			playerWonNumber = e.player != 1 ? 1 : 2;
-		}
+	protected void loadPlayers() throws PlayerException {
+		players = new PlayerFacade();
 	}
 	
-	protected void loadGameLogic(boolean isServer, int fps) {
+	protected void loadGameLogic(boolean isServer, int fps) throws PlayerException {
 		time = new GameTime(fps);
-		try {
-			gui = isServer ? new ServerGui() : new WindowGui(players.callGetName(0), players.callGetName(1));
-		} catch (PlayerException e) {
-			gui = new WindowGui("", "");
-			playerWonNumber = e.player != 1 ? 1 : 2;
-		}
+		gui = isServer ? new ServerGui() : new WindowGui(players.callGetName(0), players.callGetName(1));
 		battleground = new Battleground(gui);
 		bank = new Bank();
 	}

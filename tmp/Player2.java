@@ -8,7 +8,7 @@ public class Player2 {
 			int castleEnemy
 			) {
 
-		return 0;
+		return 5;
 	}
 	
 	public String getName() {

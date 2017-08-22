@@ -20,6 +20,7 @@ public class PlayerFilesPreparator {
 	private File[] sourceCodes;
 	private int playerIndex1;
 	private int playerIndex2;
+	private static final String[] TMP_NAMES = new String[2];
 
 	public PlayerFilesPreparator() {
 		sourceCodes = FOLDER_PLAYERS.listFiles(new SourceCodeFileFilter());
@@ -42,8 +43,8 @@ public class PlayerFilesPreparator {
 			return false;
 		}
 		FileUtil.cleanDir(new File("tmp"));
-		createTempJavaFile(playerIndex1, sourceCodes[playerIndex1]);
-		createTempJavaFile(playerIndex2, sourceCodes[playerIndex2]);
+		TMP_NAMES[0] = createTempJavaFile(sourceCodes[playerIndex1]);
+		TMP_NAMES[1] = createTempJavaFile(sourceCodes[playerIndex2]);
 		return true;
 	}
 	
@@ -59,7 +60,7 @@ public class PlayerFilesPreparator {
 		return true;
 	}
 
-	private void createTempJavaFile(int index, File sourceCode) throws IOException {
+	private String createTempJavaFile(File sourceCode) throws IOException {
 		uniqueId++;
 		final String newClassname = "Player" + uniqueId;
 		final String newFilename = newClassname + ".java";
@@ -71,6 +72,7 @@ public class PlayerFilesPreparator {
 		Files.write(newFilePath, content.getBytes());
 		
 		TMP_NAME_TO_REAL_NAME.put(newFilename, sourceCode.getName());
+		return newFilename;
 	}
 	
 	public static Collection<String> getRealNames() {
@@ -79,6 +81,11 @@ public class PlayerFilesPreparator {
 
 	public static String getPlayerRealName(String player) {
 		return TMP_NAME_TO_REAL_NAME.get(player);
+	}
+
+	public static String getOtherPlayerRealName(String player) {
+		String wonTmpName = TMP_NAMES[0].equals(player) ? TMP_NAMES[1] : TMP_NAMES[0];
+		return getPlayerRealName(wonTmpName);
 	}
 	
 }
