@@ -8,6 +8,7 @@ import br.game.castleduel.gui.GuiInterface;
 import br.game.castleduel.gui.sprite.Sprite;
 import br.game.castleduel.gui.sprite.SpriteCastle;
 import br.game.castleduel.gui.sprite.SpriteExplosion;
+import br.game.castleduel.gui.sprite.SpriteFireball;
 import br.game.castleduel.player.PlayerInfo;
 import br.game.castleduel.unit.Castle;
 import br.game.castleduel.unit.Unit;
@@ -126,6 +127,9 @@ public class Battleground {
 			if (isInAttackRange(unit, enemy) && !enemy.isDead()) {
 				unit.attackWithCooldown(enemy);
 				gui.addSprite(new SpriteExplosion(enemy.getSprite()));
+				if (unit.isRanged()) {
+					gui.addSprite(new SpriteFireball(unit.getSprite(), enemy.getSprite()));
+				}
 				return;
 			}
 		}
@@ -144,6 +148,7 @@ public class Battleground {
 				hit = true;
 				unit.attackWithNoCooldown(enemy);
 				gui.addSprite(new SpriteExplosion(enemy.getSprite()));
+				gui.addSprite(new SpriteFireball(unit.getSprite(), enemy.getSprite()));
 			}
 		}
 		if (hit) {
@@ -162,7 +167,7 @@ public class Battleground {
 	protected void tryAttackCastle(Unit unit, Castle castle) {
 		if (unit.isReady() && isInCastleRange(unit)) {
 			unit.attackWithCooldown(castle);
-			gui.addSprite(createCastleExplosionSprite(castle));
+			createCastleAttackSprites(unit, castle);
 		}
 	}
 	
@@ -171,9 +176,12 @@ public class Battleground {
 		return distance <= unit.getRange();
 	}
 	
-	protected SpriteExplosion createCastleExplosionSprite(Castle castle) {
+	protected void createCastleAttackSprites(Unit unit, Castle castle) {
 		Sprite target = SpriteCastle.getSprite(castle.getPlayerIndex());
-		return new SpriteExplosion(target);
+		gui.addSprite(new SpriteExplosion(target));
+		if (unit.isRanged()) {
+			gui.addSprite(new SpriteFireball(unit.getSprite(), target));
+		}
 	}
 	
 	protected void removeDeads() {

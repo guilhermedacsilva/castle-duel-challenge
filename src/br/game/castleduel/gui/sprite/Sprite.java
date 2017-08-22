@@ -60,12 +60,4 @@ abstract public class Sprite extends UniqueId {
 	public int getHeight() {
 		return 0;
 	}
-	
-	public int getCenterX() {
-		return 0;
-	}
-	
-	public int getCenterY() {
-		return 0;
-	}
 }

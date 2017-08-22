@@ -1,5 +1,5 @@
 public class Maria {
-
+	
 	public int play(
 			int gold, 
 			int[] units, 
@@ -7,7 +7,7 @@ public class Maria {
 			int castle,
 			int castleEnemy
 			) {
-		
+
 		return 0;
 	}
 	

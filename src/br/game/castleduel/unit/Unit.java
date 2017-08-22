@@ -105,4 +105,8 @@ public class Unit extends Killable {
 		}
 		return sprite;
 	}
+
+	public boolean isRanged() {
+		return getRange() > UnitConsts.RANGE_CLOSE;
+	}
 }

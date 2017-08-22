@@ -90,16 +90,6 @@ public class SpriteUnit extends Sprite {
 		return getImageData(HEIGHT);
 	}
 	
-	@Override
-	public int getCenterX() {
-		return getWidth()/2;
-	}
-	
-	@Override
-	public int getCenterY() {
-		return getHeight()/2;
-	}
-	
 	protected static BufferedImage loadImage(int playerIndex, Unit unit) {
 		BufferedImage image = ImageLoader.load("unit" + unit.getType() + ".png");
 		image = ImageUtil.copy(image);
