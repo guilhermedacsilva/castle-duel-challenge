@@ -1,7 +1,7 @@
 package br.game.castleduel.unit;
 
 public final class UnitConsts {
-	public static final int RANGE_CLOSE = 100;
+	public static final int RANGE_CLOSE = 1;
 	public static final int ATTACK_TYPE_NORMAL = 0;
 	public static final int ATTACK_TYPE_HIT_ALL = 1;
 	

@@ -1,11 +1,11 @@
 public class Joao {
 	private static final int WAIT     = -1; // NÃO COMPRA NENHUMA UNIDADE
-	private static final int SKELETON = 0; // ESQUELETO
-	private static final int ARCHER   = 1; // ARQUEIRO
-	private static final int OGRE     = 2; // OGRO
-	private static final int ZOMBIE   = 3; // ZUMBI
-	private static final int MAGE     = 4; // MAGO
-	private static final int CYCLOPS  = 5; // CICLOPE
+	private static final int SKELETON = 0; // ANÃO
+	private static final int ARCHER   = 1; // MAGA
+	private static final int OGRE     = 2; // DEFENSOR
+	private static final int ZOMBIE   = 3; // GUERREIRO
+	private static final int MAGE     = 4; // DRAGÕES
+	private static final int CYCLOPS  = 5; // GIGANTE
 
 	int action = 0;
 	int qnt = 0;
@@ -30,20 +30,21 @@ public class Joao {
 			int castleEnemy
 			) {
 		
-		if (action == 0 && gold >= 19) {
-			action = 1;
-		}
-		if (action == 1 && qnt < 5 && gold >= 4) {
-			qnt++;
-			return ARCHER;
-		}
-		if (qnt >= 5 && gold >= 20) {
-			action = 2;
-		}
-		if (action == 2) {
-			return ZOMBIE;
-		}
-		return WAIT;
+		return 2;
+//		if (action == 0 && gold >= 19) {
+//			action = 1;
+//		}
+//		if (action == 1 && qnt < 5 && gold >= 4) {
+//			qnt++;
+//			return ARCHER;
+//		}
+//		if (qnt >= 5 && gold >= 20) {
+//			action = 2;
+//		}
+//		if (action == 2) {
+//			return ZOMBIE;
+//		}
+//		return WAIT;
 	}
 	
 	public String getName() {

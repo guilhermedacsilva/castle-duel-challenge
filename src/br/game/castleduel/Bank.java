@@ -4,7 +4,7 @@ import br.game.castleduel.unit.Unit;
 import br.game.castleduel.unit.UnitManager;
 
 public class Bank {
-	private int[] wallets = new int[2];
+	private int[] wallets = new int[] {25, 25};
 
 	public void increaseGold() {
 		for (int index = 0; index < wallets.length; index++) {

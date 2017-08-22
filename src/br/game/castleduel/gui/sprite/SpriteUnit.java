@@ -10,21 +10,15 @@ import br.game.castleduel.util.ImageLoader;
 import br.game.castleduel.util.ImageUtil;
 
 public class SpriteUnit extends Sprite {
-	private static final int UNIT_WIDTH = 17;
-	private static final int UNIT_HEIGHT = 23;
-	private static final int UNIT_CENTER_X = 8;
-	private static final int UNIT_CENTER_Y = 11;
 	private static int[] POS_Y_OFFSET = new int[] {0,0}; //p1, p2
 	private final int playerIndex;
 	private final Unit unit;
-	private int width;
 	private BufferedImage image;
 	private int posY;
 	
 	public SpriteUnit(int playerIndex, Unit unit) {
 		this.playerIndex = playerIndex;
 		this.unit = unit;
-		width = 50;
 		image = loadImage(playerIndex, unit);
 		posY = TYPE_DATA[unit.getType()][POS_Y] + POS_Y_OFFSET[playerIndex];
 		
@@ -32,8 +26,8 @@ public class SpriteUnit extends Sprite {
 	}
 	
 	private static void nextUnitPositionY(int playerIndex) {
-		POS_Y_OFFSET[playerIndex] += 25;
-		if (POS_Y_OFFSET[playerIndex] > 50) {
+		POS_Y_OFFSET[playerIndex] += 75;
+		if (POS_Y_OFFSET[playerIndex] > 150) {
 			POS_Y_OFFSET[playerIndex] = 0;
 		}
 	}
@@ -76,9 +70,9 @@ public class SpriteUnit extends Sprite {
 	@Override
 	public int getPositionX() {
 		if (playerIndex == 0) {
-			return unit.getPosition();
+			return unit.getPosition() - getImageData(WIDTH);
 		}
-		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition() - width;
+		return Battleground.BATTLEGROUND_WIDTH - unit.getPosition();
 	}
 
 	@Override
@@ -88,22 +82,22 @@ public class SpriteUnit extends Sprite {
 	
 	@Override
 	public int getWidth() {
-		return UNIT_WIDTH;
+		return getImageData(WIDTH);
 	}
 	
 	@Override
 	public int getHeight() {
-		return UNIT_HEIGHT;
+		return getImageData(HEIGHT);
 	}
 	
 	@Override
 	public int getCenterX() {
-		return UNIT_CENTER_X;
+		return getWidth()/2;
 	}
 	
 	@Override
 	public int getCenterY() {
-		return UNIT_CENTER_Y;
+		return getHeight()/2;
 	}
 	
 	protected static BufferedImage loadImage(int playerIndex, Unit unit) {

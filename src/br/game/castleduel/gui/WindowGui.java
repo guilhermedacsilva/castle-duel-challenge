@@ -20,7 +20,7 @@ import br.game.castleduel.util.SimpleJFrame;
 
 public class WindowGui extends JPanel implements GuiInterface {
 	private static final long serialVersionUID = 1L;
-	public static final int HEIGHT_GAME = 255;
+	public static final int HEIGHT_GAME = 395;
 	public static final int CASTLE_POS_X = 20;
 	public static final int CASTLE_POS_Y = 10;
 	public static final int CASTLE_HEALTH_WIDTH = 165;
@@ -99,8 +99,10 @@ public class WindowGui extends JPanel implements GuiInterface {
 	}
 	
 	private void drawGrass(final Graphics g) {
-		for (int x = 0; x < getWidth(); x += grass.getWidth()) {
-			g.drawImage(grass, x, 165, null);
+		for (int y = 0; y < 2; y++) {
+			for (int x = 0; x < getWidth(); x += grass.getWidth()) {
+				g.drawImage(grass, x, 165+(y*128), null);
+			}
 		}
 	}
 	

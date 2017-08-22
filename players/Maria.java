@@ -8,7 +8,7 @@ public class Maria {
 			int castleEnemy
 			) {
 		
-		return -1;
+		return 0;
 	}
 	
 	public String getName() {

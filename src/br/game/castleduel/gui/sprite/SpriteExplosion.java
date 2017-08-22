@@ -21,8 +21,8 @@ public class SpriteExplosion extends Sprite {
 	
 	public SpriteExplosion(Sprite target) {
 		this.target = target;
-		offsetX = RANDOM.nextInt(target.getWidth()) - target.getCenterX();
-		offsetY = RANDOM.nextInt(target.getHeight()) - target.getCenterY();
+		offsetX = RANDOM.nextInt(target.getWidth()/3) + target.getWidth()/3 - 32;
+		offsetY = RANDOM.nextInt(target.getHeight()/3) + target.getHeight()/3 - 32;
 	}
 
 	@Override
