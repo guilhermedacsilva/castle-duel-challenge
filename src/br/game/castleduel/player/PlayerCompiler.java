@@ -31,6 +31,7 @@ public class PlayerCompiler {
 			filenames[1] = compileFile(compiler, sourceCodes, 1);
 		} catch (CompilerException e) {
 			System.out.println("Could not find the compiler!\nPlease, configure your machine.");
+			e.printStackTrace();
 			System.exit(1);
 		}
 		return filenames;
@@ -38,6 +39,9 @@ public class PlayerCompiler {
 	
 	protected static JavaCompiler getCompiler() throws CompilerException {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if (compiler == null) {
+			compiler = com.sun.tools.javac.api.JavacTool.create();
+		}
 		if (compiler == null) {
 			throw new CompilerException();
 		}

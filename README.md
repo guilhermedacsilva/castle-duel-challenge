@@ -1,7 +1,7 @@
 # Castle Duel Challenge
 Java castle duel written in Java 8 and Swing.
 
-It does not use any external Java library. The whole game is ~700kb implemented on Swing. Works with Windows, Linux and Mac. **It requires the JDK installed to run because it uses the Java compiler to compile the students' bots during runtime.** 
+The whole game is 8MB implemented on Swing. Works with Windows, Linux and Mac.
 
 The main pourpose is for students to compete with each other. They must implement a Java bot. There are samples in "/players" folder.
 
