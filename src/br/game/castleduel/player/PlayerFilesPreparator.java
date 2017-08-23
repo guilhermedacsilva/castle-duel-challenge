@@ -42,7 +42,7 @@ public class PlayerFilesPreparator {
 		if (!choosePlayerIndex()) {
 			return false;
 		}
-		FileUtil.cleanDir(new File("tmp"));
+		FileUtil.cleanDir(PlayerCompiler.TEMP_PLAYERS);
 		TMP_NAMES[0] = createTempJavaFile(sourceCodes[playerIndex1]);
 		TMP_NAMES[1] = createTempJavaFile(sourceCodes[playerIndex2]);
 		return true;

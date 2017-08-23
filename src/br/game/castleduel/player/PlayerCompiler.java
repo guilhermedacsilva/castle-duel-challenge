@@ -10,7 +10,13 @@ import br.game.castleduel.exception.PlayerException;
 import br.game.castleduel.util.SourceCodeFileFilter;
 
 public class PlayerCompiler {
-	private static final File TEMP_PLAYERS = new File("tmp");
+	public static final File TEMP_PLAYERS = new File("tmp");
+	
+	static {
+		if (!TEMP_PLAYERS.exists()) {
+			TEMP_PLAYERS.mkdir();
+		}
+	}
 	
 	public static String[] compileFiles() throws PlayerException {
 		File[] sourceCodes = TEMP_PLAYERS.listFiles(new SourceCodeFileFilter());

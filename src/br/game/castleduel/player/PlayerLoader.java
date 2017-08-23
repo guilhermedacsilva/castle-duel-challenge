@@ -4,12 +4,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import br.game.castleduel.exception.PlayerException;
-import br.game.castleduel.util.FileUtil;
 
 public class PlayerLoader {	
 	public static Object load(int playerIndex, String filename) throws PlayerException {
 		try {
-			URL[] urls = new URL[] {FileUtil.TMP.toURI().toURL()};
+			URL[] urls = new URL[] {PlayerCompiler.TEMP_PLAYERS.toURI().toURL()};
 			URLClassLoader classLoader = URLClassLoader.newInstance(urls);
 			String className = filename.substring(0, filename.length()-5);
 			Class<?> clazz = Class.forName(className, true, classLoader);

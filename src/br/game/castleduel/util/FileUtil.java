@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 public class FileUtil {
-	public static final File TMP = new File("tmp");
-
 	public static void cleanDir(final File folder) {
 		for(File file: folder.listFiles()) {
 			if (!file.isDirectory()) {
