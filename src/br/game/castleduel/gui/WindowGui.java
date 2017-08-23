@@ -41,6 +41,12 @@ public class WindowGui extends JPanel implements GuiInterface {
 	protected int framesLeft;
 	
 	public WindowGui(String playerName1, String playerName2) {
+		if (playerName1 == null) {
+			playerName1 = "Player 1";
+		}
+		if (playerName2 == null) {
+			playerName2 = "Player 2";
+		}
 		this.playerName1 = playerName1;
 		this.playerName2 = playerName2;
 	}
